@@ -10,6 +10,8 @@ import java.util.ArrayList;
 public class MetaData {
 
     public static Integer maxParticipantSize = 16;
+    public static Integer timeCycle = 60;
+    public static Integer inventoryChangePercent = 30;
     public static PCH_Status gameStatus = PCH_Status.DISABLED;
     public static ArrayList<Player> leaveParticipants = new ArrayList<>();
     public static ArrayList<Player> participants = new ArrayList<>();
@@ -26,6 +28,7 @@ public class MetaData {
             return 1;
         if(participants.contains(player))
             return 2;
+        leaveParticipants.remove(player);
         participants.add(player);
         return 0;
     }

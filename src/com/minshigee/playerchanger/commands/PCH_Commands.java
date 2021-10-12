@@ -24,24 +24,37 @@ public class PCH_Commands implements CommandExecutor {
         if(command.getName().equalsIgnoreCase("pch")){
             if(strings.length < 1){
                 player.sendMessage("args가 필요합니다.");
-                return false;
+                return true;
             }
             if(strings[0].equalsIgnoreCase("start")){
                 if(!player.isOp()){
-                    return false;
+                    return true;
+                }
+                if(strings.length >= 2 && strings[1].equalsIgnoreCase("all")){
+                    PCH_Scheduler.startGame(player);
+                    player.getServer().getOnlinePlayers().forEach(p -> {
+                        MetaData.addParticipant(p);
+                    });
+                    return true;
                 }
                 PCH_Scheduler.startGame(player);
             }
             else if(strings[0].equalsIgnoreCase("stop")){
                 if(!player.isOp()){
-                    return false;
+                    return true;
                 }
                 PCH_Scheduler.stopGame();
+            }
+            else if(strings[0].equalsIgnoreCase("list")){
+                player.sendMessage(ChatColor.AQUA + "==참가자 명단!==");
+                MetaData.participants.forEach(p -> player.sendMessage(ChatColor.GREEN + p.getName()));
+                player.sendMessage(ChatColor.DARK_AQUA + "==관람자 명단!==");
+                MetaData.leaveParticipants.forEach(p -> player.sendMessage(ChatColor.GOLD + p.getName()));
             }
             else if(strings[0].equalsIgnoreCase("ready")){
                 if(MetaData.gameStatus != PCH_Status.SETTING){
                     player.sendMessage(ChatColor.GREEN + "[PlayerChanger]: 현재는 등록이 불가능합니다.");
-                    return false;
+                    return true;
                 }
                 int code = MetaData.addParticipant(player);
                 switch (code){
@@ -55,12 +68,21 @@ public class PCH_Commands implements CommandExecutor {
                         player.sendMessage(ChatColor.GOLD + "[PlayerChanger]: 이미 등록된 상태입니다.");
                 }
             }
+            else if(strings[0].equalsIgnoreCase("spectator")){
+                if(MetaData.gameStatus != PCH_Status.SETTING){
+                    player.sendMessage(ChatColor.GREEN + "[PlayerChanger]: 현재는 등록이 불가능합니다.");
+                    return true;
+                }
+                MetaData.delParticipant(player);
+                MetaData.addLeaveParticipant(player);
+            }
             else if(strings[0].equalsIgnoreCase("leave")){
                 if(MetaData.gameStatus != PCH_Status.SETTING){
                     player.sendMessage(ChatColor.GREEN + "[PlayerChanger]: 현재는 퇴장이 불가능합니다.");
-                    return false;
+                    return true;
                 }
                 MetaData.delParticipant(player);
+                MetaData.delLeaveParticipant(player);
             }
             else if(strings[0].equalsIgnoreCase("loc")){
                 for(int idx = 0; idx < MetaData.startLocations.size(); idx++){
@@ -85,6 +107,6 @@ public class PCH_Commands implements CommandExecutor {
                 }
             }
         }
-        return false;
+        return true;
     }
 }
