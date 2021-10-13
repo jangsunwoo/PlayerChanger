@@ -1,27 +1,22 @@
-package com.minshigee.playerchanger.data;
+package com.minshigee.playerchanger.domain;
 
-import com.minshigee.playerchanger.PlayerChanger;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
-public class MetaData {
+public class PlayInfo {
 
     public static Integer maxParticipantSize = 16;
     public static Integer timeCycle = 60;
+    public static Integer blockRemoveCycle = 30;
+
     public static Integer inventoryChangePercent = 30;
     public static PCH_Status gameStatus = PCH_Status.DISABLED;
     public static ArrayList<Player> leaveParticipants = new ArrayList<>();
     public static ArrayList<Player> participants = new ArrayList<>();
     public static ArrayList<Location> startLocations = new ArrayList<>();
-
-    public ArrayList<String> getParticipants(){
-        return (ArrayList<String>) participants.stream()
-                .map(Player::getName)
-                .toList();
-    }
 
     public static int addParticipant(Player player){
         if(participants.size() >= maxParticipantSize)

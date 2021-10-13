@@ -1,8 +1,9 @@
 package com.minshigee.playerchanger;
 
-import com.minshigee.playerchanger.commands.PCH_Commands;
-import com.minshigee.playerchanger.events.EventGateway;
-import com.minshigee.playerchanger.logic.PCH_Scheduler;
+import com.minshigee.playerchanger.controllers.CommandsController;
+import com.minshigee.playerchanger.controllers.EventsController;
+import com.minshigee.playerchanger.repositories.CommandsRepository;
+import com.minshigee.playerchanger.views.GameView;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,15 +27,13 @@ public class PlayerChanger extends JavaPlugin {
 
     private void init(){
 
-        PCH_Commands cmdExecutor = new PCH_Commands();
-
         getServer().getPluginManager().registerEvents(
-                new EventGateway(),
+                new EventsController(),
                 this
         );
 
-        getCommand("pch").setExecutor(cmdExecutor);
+        getCommand("pch").setExecutor(new CommandsController(new CommandsRepository()));
 
-        PCH_Scheduler.playStatusBoardManager = Bukkit.getScoreboardManager();
+        GameView.playStatusBoardManager = Bukkit.getScoreboardManager();
     }
 }

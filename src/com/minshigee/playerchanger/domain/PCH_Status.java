@@ -1,4 +1,4 @@
-package com.minshigee.playerchanger.data;
+package com.minshigee.playerchanger.domain;
 
 public enum PCH_Status{
     DISABLED,
