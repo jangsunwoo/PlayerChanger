@@ -2,8 +2,11 @@ package com.minshigee.playerchanger.repositories;
 
 import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.controllers.GameController;
+import com.minshigee.playerchanger.domain.AbilityInfo;
 import com.minshigee.playerchanger.domain.PCH_Status;
 import com.minshigee.playerchanger.domain.PlayInfo;
+import com.minshigee.playerchanger.domain.abilities.interfaces.AbilityCode;
+import com.minshigee.playerchanger.util.Util;
 import com.minshigee.playerchanger.views.GameView;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -28,6 +31,38 @@ public class GameRepository {
             ChatColor.AQUA + "[PlayerChanger]: 당신은 관전자입니다. /pch ready 로 등록하세요."
     };
 
+
+
+    public void executeSecondToParticipants(){
+        boolean closeInv = GameController.curTime%PlayInfo.timeCycle > PlayInfo.timeCycle - 5;
+        PlayInfo.participants.forEach(p -> {
+                    //TODO 초당 참가자에게 코드 실행하기.
+                Util.makeCountSound(closeInv, p);
+                closeInventory(closeInv,p);
+                Util.makeActionBarMessage(p,
+                           ChatColor.AQUA + "Time - " +
+                                ChatColor.GOLD + (PlayInfo.timeCycle - GameController.curTime % PlayInfo.timeCycle) +
+                                ChatColor.AQUA + " Percentage - " + ChatColor.GOLD + GameController.invPer + "%"
+                );
+
+
+
+                //TODO END
+            }
+        );
+    }
+
+    public void executeSecondToLeaveParticipants(){
+        PlayInfo.leaveParticipants.forEach(p -> {
+                    //TODO 초당 관람자에게 코드 실행하기.
+
+
+
+
+                    // TODO END
+                }
+        );
+    }
     public void initGameStarting(Server server){
         PlayInfo.participants.forEach(player -> {
             player.setGameMode(GameMode.SURVIVAL);
@@ -36,9 +71,8 @@ public class GameRepository {
         });
 
         server.getOnlinePlayers().forEach(p ->
-                p.sendMessage(ChatColor.GREEN + "[PlayerChanger]: 게임이 시작되었습니다.\n" +
-                        "Author: " + ChatColor.AQUA + "minshigee\n" +
-                        ChatColor.GRAY + "desc: 시간마다 플레이어의 정보가 바뀝니다. 인벤토리, 체력, 좌표에 주의하세요.")
+                p.sendMessage(ChatColor.GREEN + "Author: " + ChatColor.AQUA + "minshigee\n" +
+                        ChatColor.GRAY + "시간마다 플레이어의 정보가 바뀝니다. 인벤토리, 체력, 좌표에 주의하세요.")
         );
     }
 
@@ -55,23 +89,6 @@ public class GameRepository {
                 });
         PlayInfo.participants.clear();
         PlayInfo.leaveParticipants.clear();
-    }
-
-    public void executeSecondToParticipants(){
-        boolean closeInv = GameController.curTime%PlayInfo.timeCycle > PlayInfo.timeCycle - 5;
-        PlayInfo.participants.forEach(p -> {
-                    //TODO 초당 참가자에게 코드 실행하기.
-                view.makeCountSound(closeInv, p);
-                closeInventory(closeInv,p);
-            }
-        );
-    }
-
-    public void executeSecondToLeaveParticipants(){
-        PlayInfo.leaveParticipants.forEach(p -> {
-                    //TODO 초당 관람자에게 코드 실행하기.
-                }
-        );
     }
 
     public void makeGameScheduler(Server server){
@@ -107,19 +124,24 @@ public class GameRepository {
                         return;
                     }
                     server.getOnlinePlayers().forEach(p ->
-                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(readyMessage[0]))
+                                    Util.makeActionBarMessage(p,readyMessage[0])
                     );
                     PlayInfo.participants.forEach(p ->
-                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(readyMessage[1]))
+                                    Util.makeActionBarMessage(p,readyMessage[1])
                     );
                     PlayInfo.leaveParticipants.forEach(p ->
-                            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(readyMessage[2]))
+                                    Util.makeActionBarMessage(p,readyMessage[2])
                     );
                     view.createPlayStatusBoard();
                 },
                 0,
                 20L * 1L
         );
+    }
+
+    public void giveAbility(){
+        //TODO 능력 섞기
+        PlayInfo.participants.forEach(p -> AbilityInfo.giveParticipantAbility(p, AbilityCode.Dandaegi));
     }
 
     public void changeInventory(Server server) {
@@ -157,8 +179,8 @@ public class GameRepository {
             to.updateInventory();
             from.updateInventory();
 
-            view.makeSoundInvChangedPlayer(to);
-            view.makeSoundInvChangedPlayer(from);
+            Util.makeSoundInvChangedPlayer(to);
+            Util.makeSoundInvChangedPlayer(from);
         }
     }
 

@@ -8,6 +8,8 @@ public interface ICommandRepository {
     public void executeStart(Player player);
     @NeedPermission
     public void executeStop(Player player);
+    @NeedPermission
+    public void executeAbility(Player player);
 
     public void executeList(Player player);
     public void executeReady(Player player);

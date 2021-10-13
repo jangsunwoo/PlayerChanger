@@ -1,8 +1,10 @@
 package com.minshigee.playerchanger.repositories;
 
+import com.minshigee.playerchanger.domain.AbilityInfo;
 import com.minshigee.playerchanger.domain.PlayInfo;
 import com.minshigee.playerchanger.domain.PCH_Status;
 import com.minshigee.playerchanger.controllers.GameController;
+import com.minshigee.playerchanger.domain.abilities.interfaces.AbilityCode;
 import com.minshigee.playerchanger.repositories.interfaces.ICommandRepository;
 import com.minshigee.playerchanger.repositories.interfaces.NeedPermission;
 import org.bukkit.ChatColor;
@@ -28,6 +30,14 @@ public class CommandsRepository implements ICommandRepository {
     @NeedPermission
     public void executeStop(Player player) {
         GameController.stopGame();
+    }
+
+    @Override
+    @NeedPermission
+    public void executeAbility(Player player) {
+        if(PlayInfo.gameStatus != PCH_Status.SETTING)
+            return;
+        AbilityInfo.giveParticipantAbility(player, AbilityCode.Dandaegi);
     }
 
     @Override

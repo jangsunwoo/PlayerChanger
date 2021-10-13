@@ -29,13 +29,4 @@ public class GameView {
         PlayInfo.participants.forEach(p -> p.setScoreboard(board));
         PlayInfo.leaveParticipants.forEach(p -> p.setScoreboard(board));
     }
-
-    public void makeSoundInvChangedPlayer(Player player){
-        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 2f, 1f);
-    }
-    public void makeCountSound(boolean b, Player player){
-        if(b) {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 1);
-        }
-    }
 }

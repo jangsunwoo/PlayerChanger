@@ -2,6 +2,7 @@ package com.minshigee.playerchanger.controllers;
 
 import com.minshigee.playerchanger.repositories.CommandsRepository;
 import com.minshigee.playerchanger.repositories.interfaces.NeedPermission;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,6 +28,7 @@ public class CommandsController implements CommandExecutor {
             "Spectator",
             "Start",
             "Stop",
+            "Ability",
             "ReadyAll",
             "Loc",
             "AddLoc",
@@ -89,6 +91,7 @@ public class CommandsController implements CommandExecutor {
                 player.sendMessage(ChatColor.RED + "[PlayerChanger]: 유효하지 않은 명령입니다.");
                 return true;
             }
+            Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[PlayerChanger]: " + player.getName() + " " + "execute" + excuteName);
             excuteCommand(player, findMethod("execute" + excuteName));
             return true;
         }

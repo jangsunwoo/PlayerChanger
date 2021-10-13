@@ -25,15 +25,6 @@ import java.util.Arrays;
 public class EventsController implements Listener {
 
     private static final EventsRepository repository = new EventsRepository();
-    private static final InventoryType[] moveItemInventory = {
-      InventoryType.PLAYER,
-      InventoryType.CRAFTING
-    };
-    private static final InventoryAction[] moveItemOptions = {
-            InventoryAction.PLACE_ALL,
-            InventoryAction.PLACE_SOME,
-            InventoryAction.PLACE_ONE
-    };
 
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent event){
@@ -73,38 +64,12 @@ public class EventsController implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public static void onItemMove(InventoryClickEvent event){
-        if(PlayInfo.gameStatus != PCH_Status.STARTING)
-            return;;
-        Player player = (Player) event.getWhoClicked();
-        if(!PlayInfo.isExistParticipant(player))
-            return;
-        try {
-            if (event.getClick().isShiftClick()) {
-                if (event.getClickedInventory().getType().equals(InventoryType.PLAYER)) {
-                    event.setCancelled(true);
-                }
-            } else if (Arrays.stream(moveItemOptions).anyMatch(event.getAction()::equals)) {
-                if (!Arrays.stream(moveItemInventory).anyMatch(event.getClickedInventory().getType()::equals)) {
-                    event.setCancelled(true);
-                }
-            }
-        }
-        catch (Exception e){
-
-        }
+        repository.checkInvMoveBug(event);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public static void onItemDrag(InventoryDragEvent event){
-        if(PlayInfo.gameStatus != PCH_Status.STARTING)
-            return;
-        Player player = (Player) event.getWhoClicked();
-        if(!PlayInfo.isExistParticipant(player))
-            return;
-        if(Arrays.stream(moveItemInventory).anyMatch(event.getInventory().getType()::equals)){
-            return;
-        }
-        event.setCancelled(true);
+        repository.checkInvDragBug(event);
     }
 
     @EventHandler()

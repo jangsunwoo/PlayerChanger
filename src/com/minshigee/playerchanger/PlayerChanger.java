@@ -1,5 +1,6 @@
 package com.minshigee.playerchanger;
 
+import com.minshigee.playerchanger.controllers.AbilitiesController;
 import com.minshigee.playerchanger.controllers.CommandsController;
 import com.minshigee.playerchanger.controllers.EventsController;
 import com.minshigee.playerchanger.repositories.CommandsRepository;
@@ -29,6 +30,10 @@ public class PlayerChanger extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(
                 new EventsController(),
+                this
+        );
+        getServer().getPluginManager().registerEvents(
+                new AbilitiesController(),
                 this
         );
 
