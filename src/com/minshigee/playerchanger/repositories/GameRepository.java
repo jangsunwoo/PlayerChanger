@@ -35,58 +35,20 @@ public class GameRepository {
             ChatColor.AQUA + "[PlayerChanger]: 당신은 관전자입니다. /pch ready 로 등록하세요."
     };
 
-    public void executeSecondToParticipants(){
-        boolean closeInv = GameController.curTime%PlayInfo.timeCycle > PlayInfo.timeCycle - 5;
-        PlayInfo.participants.forEach(p -> {
-                Util.makeCountSound(closeInv, p);
-                closeInventory(closeInv,p);
-                updateActionBar(p);
-                taskRepository.executeTaskParticipantsSecond(p);
-            }
-        );
-    }
-
-    public void executeSecondToLeaveParticipants(){
-        PlayInfo.leaveParticipants.forEach(p -> taskRepository.executeTaskSpectatorsSecond(p));
-    }
-
     public void initGameStarting(Server server){
         PlayInfo.participants.forEach(player -> {
             player.setGameMode(GameMode.SURVIVAL);
             player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
             player.setFoodLevel(20);
         });
-
+        executeSpawn();
         //TODO 능력부여
         giveAbility();
 
         server.getOnlinePlayers().forEach(p ->
-                p.sendMessage(ChatColor.GREEN + "Author: " + ChatColor.AQUA + "minshigee\n" +
+                p.sendMessage(ChatColor.GREEN + "게임이 시작되었습니다.\nAuthor: " + ChatColor.AQUA + "minshigee\n" +
                         ChatColor.GRAY + "시간마다 플레이어의 정보가 바뀝니다. 인벤토리, 체력, 좌표에 주의하세요.")
         );
-    }
-
-    public void resetGame(Server server){
-        GameController.curTime = 0;
-        GameController.invPer = PlayInfo.inventoryChangePercent;
-        resetScoreboard(server);
-        PlayInfo.resetPlayInfo(); //TODO 무조건 뒤에 배치 (참가자 명단이 사라집니다.)
-        AbilityInfo.resetAbilityInfo();
-        Util.makeGameMainSound();
-        server.getOnlinePlayers().forEach(player -> {
-            player.sendMessage(ChatColor.RED + "[PlayerChanger]: 게임이 종료되었습니다.");
-        });
-    }
-
-    private void resetScoreboard(Server server){
-        PlayInfo.participants.forEach(player -> {
-            PlayInfo.resetPlayerAttribute(player);
-            player.setScoreboard(server.getScoreboardManager().getMainScoreboard());
-        });
-        PlayInfo.leaveParticipants.forEach(player -> {
-            PlayInfo.resetPlayerAttribute(player);
-            player.setScoreboard(server.getScoreboardManager().getMainScoreboard());
-        });
     }
 
     public void makeGameScheduler(Server server){
@@ -104,7 +66,9 @@ public class GameRepository {
                     view.createPlayStatusBoard();
 
                     taskRepository.executeEventSchedulesSecond();
-
+                    if(GameController.curTime % 7 == 0){
+                        taskRepository.executeEventSchedules7Second();
+                    }
                     if(GameController.curTime % 10 == 0){
                         taskRepository.executeEventSchedules10Second();
                     }
@@ -122,6 +86,18 @@ public class GameRepository {
                 0,
                 20L
         );
+    }
+
+    public void resetGame(Server server){
+        GameController.curTime = 0;
+        GameController.invPer = PlayInfo.inventoryChangePercent;
+        resetScoreboard(server);
+        PlayInfo.resetPlayInfo(); //TODO 무조건 뒤에 배치 (참가자 명단이 사라집니다.)
+        AbilityInfo.resetAbilityInfo();
+        Util.makeGameMainSound();
+        server.getOnlinePlayers().forEach(player -> {
+            player.sendMessage(ChatColor.RED + "[PlayerChanger]: 게임이 종료되었습니다.");
+        });
     }
 
     public void makeSettingInfoSchedule(Server server){
@@ -143,7 +119,25 @@ public class GameRepository {
         );
     }
 
+    private void executeSpawn(){
+        List<Player> players = new ArrayList<>(PlayInfo.participants);
+        Collections.shuffle(players);
+        List<Location> locations = new ArrayList<>(PlayInfo.startLocations);
+        Collections.shuffle(locations);
+        AtomicInteger idx = new AtomicInteger();
+        int cycle = locations.size();
+        players.forEach(player -> {
+            player.teleport(locations.get(idx.getAndIncrement() % cycle));
+        });
+    }
+
     public void giveAbility(){
+
+//        PlayInfo.participants.forEach(player -> {
+//            AbilityInfo.giveParticipantAbility(player, AbilityCode.Golem);
+//        });
+//        return;
+
         List<Player> players = new ArrayList<>(PlayInfo.participants);
         Collections.shuffle(players);
         List<AbilityCode> tmpAbilityCode = Arrays.stream(AbilityCode.values()).collect(Collectors.toList());
@@ -153,7 +147,7 @@ public class GameRepository {
         players.forEach(player -> {
             AbilityInfo.giveParticipantAbility(player, tmpAbilityCode.get(idx.getAndIncrement() % cycle));
         });
-        tmpAbilityCode.forEach(code -> Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + code.name()));
+
     }
 
     public void changeInventory(Server server) {
@@ -193,6 +187,32 @@ public class GameRepository {
             Util.makeSoundInvChangedPlayer(to);
             Util.makeSoundInvChangedPlayer(from);
         }
+    }
+
+    public void executeSecondToParticipants(){
+        boolean closeInv = GameController.curTime%PlayInfo.timeCycle > PlayInfo.timeCycle - 5;
+        PlayInfo.participants.forEach(p -> {
+                    Util.makeCountSound(closeInv, p);
+                    closeInventory(closeInv,p);
+                    updateActionBar(p);
+                    taskRepository.executeTaskParticipantsSecond(p);
+                }
+        );
+    }
+
+    public void executeSecondToLeaveParticipants(){
+        PlayInfo.leaveParticipants.forEach(p -> taskRepository.executeTaskSpectatorsSecond(p));
+    }
+
+    private void resetScoreboard(Server server){
+        PlayInfo.participants.forEach(player -> {
+            PlayInfo.resetPlayerAttribute(player);
+            player.setScoreboard(server.getScoreboardManager().getMainScoreboard());
+        });
+        PlayInfo.leaveParticipants.forEach(player -> {
+            PlayInfo.resetPlayerAttribute(player);
+            player.setScoreboard(server.getScoreboardManager().getMainScoreboard());
+        });
     }
 
     private void closeInventory(boolean b, Player p){

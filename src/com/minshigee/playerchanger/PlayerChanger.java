@@ -3,6 +3,7 @@ package com.minshigee.playerchanger;
 import com.minshigee.playerchanger.controllers.AbilitiesController;
 import com.minshigee.playerchanger.controllers.CommandsController;
 import com.minshigee.playerchanger.controllers.EventsController;
+import com.minshigee.playerchanger.domain.AbilityInfo;
 import com.minshigee.playerchanger.repositories.CommandsRepository;
 import com.minshigee.playerchanger.repositories.EventsRepository;
 import com.minshigee.playerchanger.views.GameView;
@@ -28,7 +29,7 @@ public class PlayerChanger extends JavaPlugin {
     }
 
     private void init(){
-
+        AbilityInfo.resetAbilityDataSet();
         getServer().getPluginManager().registerEvents(
                 new AbilitiesController(),
                 this

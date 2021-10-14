@@ -22,7 +22,6 @@ public class GameController {
         }
         else if(PlayInfo.gameStatus == PCH_Status.SETTING){
             changeStatusToStarting(player.getServer());
-            player.sendMessage(ChatColor.RED + "[PlayerChanger]: 게임이 시작되었습니다.");
         }
         else{
             player.sendMessage(ChatColor.RED + "[PlayerChanger]: 이미 게임이 시작되었습니다.");
@@ -35,9 +34,22 @@ public class GameController {
     }
 
     private static void changeStatusToStarting(Server server){
+        if(PlayInfo.startLocations.size() < 1){
+            server.getConsoleSender().sendMessage(ChatColor.RED + "[PlayerChanger]: 시작 좌표 값이 부족합니다.");
+            return;
+        }
+        if(PlayInfo.participants.size() < 2){
+            server.getConsoleSender().sendMessage(ChatColor.RED + "[PlayerChanger]: 유저 수가 부족합니다.");
+            return;
+        }
         PlayInfo.gameStatus = PCH_Status.STARTING;
         repository.initGameStarting(PlayerChanger.playerChanger.getServer());
         repository.makeGameScheduler(server);
+    }
+
+    public static void makeEnding(Player winner){
+        winner.getServer().getOnlinePlayers().forEach(player -> player.sendMessage(ChatColor.GOLD + "[PlayerChanger]: " + winner.getName()+ "님이 승리하셨습니다.") );
+        repository.resetGame(winner.getServer());
     }
 
     public static void stopGame(){

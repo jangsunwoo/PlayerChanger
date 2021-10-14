@@ -3,12 +3,12 @@ package com.minshigee.playerchanger.repositories;
 import com.minshigee.playerchanger.domain.AbilityInfo;
 import com.minshigee.playerchanger.domain.abilities.interfaces.AbilityCode;
 import com.minshigee.playerchanger.repositories.abilities.Blacksmith;
+import com.minshigee.playerchanger.repositories.abilities.Guy;
 import org.bukkit.entity.Player;
 
 public class TaskRepository {
 
     public void executeTaskParticipantsSecond(Player player){
-
     }
 
     public void executeTaskSpectatorsSecond(Player player){
@@ -17,6 +17,11 @@ public class TaskRepository {
 
     public void executeEventSchedulesSecond(){
 
+    }
+
+    public void executeEventSchedules7Second(){
+        ((Guy) AbilityInfo.getAbilityObject(AbilityCode.Guy))
+                .executeGuyEvent(); //가이 이벤트 등록
     }
 
     public void executeEventSchedules10Second(){

@@ -44,7 +44,7 @@ public class GoldenPig extends Ability {
         }
     }
 
-    // TODO 황금돼지 능력 코드 업데이트.
+    //param 황금돼지 능력 코드 업데이트.
     public void damagedEventGoldenPig(Player player) {
         int r = random.nextInt(100);
         if(r < 75)
@@ -63,7 +63,7 @@ public class GoldenPig extends Ability {
         ItemStack item = new ItemStack(material, 1);
         for(int i = 0; i < amount; i++){
             player.getLocation().getWorld().dropItemNaturally(player.getLocation().add(0,1,0), item)
-                    .setVelocity(new Vector(random.nextInt(4) - 2, random.nextInt(3), random.nextInt(4) - 2));
+                    .setVelocity(new Vector(random.nextInt(2) - 1, random.nextInt(2) + 1, random.nextInt(2) - 1));
         }
     }
 }

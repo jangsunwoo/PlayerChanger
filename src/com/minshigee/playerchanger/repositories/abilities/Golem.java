@@ -18,7 +18,7 @@ public class Golem extends Ability {
 
     public Golem(){
         name = "골렘";
-        description = "아주 강력한 골렘입니다. 하지만 많이 느립니다.";
+        description = "조금 느리지만 강력한 골렘입니다.";
         hurtSound = Sound.ENTITY_IRON_GOLEM_HURT;
         deathSound = Sound.ENTITY_IRON_GOLEM_DEATH;
     }
@@ -27,13 +27,12 @@ public class Golem extends Ability {
     protected void initPlayerAttribute(Player player) {
         super.initPlayerAttribute(player);;
         player.getAttribute(Attribute.GENERIC_ARMOR).setBaseValue(4);
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40);
-
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(26);
         player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(2);
         player.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(5f);
-        player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.08D);
+        player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.1D);
+        player.setHealth(26);
         Util.makeGettingAbilityParticle(player, Particle.LANDING_OBSIDIAN_TEAR);
-        player.setHealth(40);
     }
 
 }

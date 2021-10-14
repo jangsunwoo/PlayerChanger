@@ -27,6 +27,7 @@ public class Dandaegi extends Ability {
     @Override
     protected void initPlayerAttribute(Player player) {
         super.initPlayerAttribute(player);
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(10);
         Util.makeGettingAbilityParticle(player, Particle.SLIME);
     }
 
@@ -47,14 +48,14 @@ public class Dandaegi extends Ability {
     // TODO 단데기 능력 코드 업데이트.
     public void damagedEventDandaegi(Player player, EntityDamageEvent event) {
         double maxHealth = Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue();
-        double healthRatio = Math.max(player.getHealth() / maxHealth, 0.03D);
+        double healthRatio = Math.max(player.getHealth() / maxHealth, 0.07D);
         event.setDamage(event.getDamage() * healthRatio);
     }
 
     public void attackEventDandaegi(Player player, EntityDamageByEntityEvent event){
         double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
         double healthRatio = player.getHealth() / maxHealth;
-        healthRatio = Math.max(player.getHealth() / maxHealth, 0.2D);
+        healthRatio = Math.max(player.getHealth() / maxHealth, 0.5D);
         player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(healthRatio);
     }
 }

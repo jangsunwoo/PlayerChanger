@@ -1,5 +1,6 @@
 package com.minshigee.playerchanger.domain;
 
+import com.minshigee.playerchanger.controllers.GameController;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -44,6 +45,10 @@ public class PlayInfo {
         participants.forEach(p -> {
             p.sendMessage(msg);
         });
+
+        if(gameStatus.equals(PCH_Status.STARTING) && participants.size() <= 1){
+            GameController.makeEnding(participants.stream().findFirst().get());
+        }
     }
 
     public static boolean isExistParticipant(Player player){

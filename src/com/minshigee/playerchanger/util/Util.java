@@ -34,10 +34,7 @@ public class Util {
             player.playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 2f, 0.4f);
         });
     }
-    //TODO SOUND DATA
-    public static void makeGettingAbilitySound(Player player){
-        player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 2f, 1f);
-    }
+
     public static void makeSoundInvChangedPlayer(Player player){
         player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 2f, 1f);
     }

@@ -4,5 +4,8 @@ public enum AbilityCode {
     Dandaegi,
     Blacksmith,
     GoldenPig,
-    Golem
+    Golem,
+    Solidarity,
+    Guy,
+    Attacker,
 }

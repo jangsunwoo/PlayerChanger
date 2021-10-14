@@ -32,17 +32,19 @@ public class Ability implements IAbility, Listener {
 
     protected void initPlayerAttribute(Player player) {
         player.sendTitle(this.getName(),this.getDescription(),20, 260, 20);
-        Util.makeGettingAbilitySound(player);
     }
 
+    @Override
     public void playHurtSound(Player player){
         if(hurtSound == null)
             return;
         player.getLocation().getWorld()
                 .playSound(player.getLocation(), hurtSound, 3, 1);
     }
-    public void playDeathSound(Player player){
-        if(hurtSound == null)
+
+    @Override
+    public void playerDeathSound(Player player) {
+        if(deathSound == null)
             return;
         player.getLocation().getWorld().
                 playSound(player.getLocation(), deathSound, 3, 1);

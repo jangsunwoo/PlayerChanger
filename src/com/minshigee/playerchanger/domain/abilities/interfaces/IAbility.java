@@ -9,5 +9,6 @@ public interface IAbility {
 
     public void executeAbility(Player player);
     public void playHurtSound(Player player);
+    public void playerDeathSound(Player player);
 
 }
