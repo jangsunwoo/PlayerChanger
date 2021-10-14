@@ -1,14 +1,14 @@
 package com.minshigee.playerchanger.domain;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.w3c.dom.Attr;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 public class PlayInfo {
 
@@ -18,8 +18,8 @@ public class PlayInfo {
 
     public static Integer inventoryChangePercent = 30;
     public static PCH_Status gameStatus = PCH_Status.DISABLED;
-    public static ArrayList<Player> leaveParticipants = new ArrayList<>();
-    public static ArrayList<Player> participants = new ArrayList<>();
+    public static HashSet<Player> leaveParticipants = new HashSet<>();
+    public static HashSet<Player> participants = new HashSet<>();
     public static ArrayList<Location> startLocations = new ArrayList<>();
 
     public static int addParticipant(Player player){
@@ -93,10 +93,17 @@ public class PlayInfo {
     }
     public static void resetPlayerAttribute(Player player){
         Arrays.stream(Attribute.values()).forEach(attribute -> resetAttribute(player,attribute));
+        player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.1D);
     }
     private static void resetAttribute(Player player, Attribute attribute){
-        Objects.requireNonNull(player.getAttribute(attribute)).setBaseValue(
-                Objects.requireNonNull(player.getAttribute(attribute)).getDefaultValue()
-        );
+        try {
+            Objects.requireNonNull(player.getAttribute(attribute)).setBaseValue(
+                    Objects.requireNonNull(player.getAttribute(attribute)).getDefaultValue()
+            );
+        }
+        catch (Exception e){
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[PlayerChanger]: " + player.getName() + " " + attribute.name() + " Attribute 초기화 실패.");
+        }
+
     }
 }

@@ -30,13 +30,14 @@ public class PlayerChanger extends JavaPlugin {
     private void init(){
 
         getServer().getPluginManager().registerEvents(
-                new EventsController(new EventsRepository()),
-                this
-        );
-        getServer().getPluginManager().registerEvents(
                 new AbilitiesController(),
                 this
         );
+        getServer().getPluginManager().registerEvents(
+                new EventsController(new EventsRepository()),
+                this
+        );
+
 
         getCommand("pch").setExecutor(new CommandsController(new CommandsRepository()));
 

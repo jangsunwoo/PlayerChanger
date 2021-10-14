@@ -8,5 +8,6 @@ public interface IAbility {
     public String getDescription();
 
     public void executeAbility(Player player);
+    public void playHurtSound(Player player);
 
 }

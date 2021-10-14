@@ -15,7 +15,7 @@ public class Blacksmith extends Ability {
 
     public Blacksmith(){
         name = "대장장이";
-        description = "손에 든 아이템이 10초마다 랜덤으로 강화된다.";
+        description = "시간마다 손에 든 모든 것들에 귀한 가치를 부여합니다.";
     }
 
     @Override
@@ -36,9 +36,9 @@ public class Blacksmith extends Ability {
 
     private ArrayList<Integer> percentEnchantLevels = new ArrayList<>(){{
         add(70);
-        add(20);
-        add(8);
-        add(2);
+        add(90);
+        add(98);
+        add(100);
     }};
 
     //TODO 대장장이 이벤트 핸들링
@@ -46,7 +46,7 @@ public class Blacksmith extends Ability {
         AbilityInfo.participantAbilityInfo.get(AbilityCode.Blacksmith)
                 .forEach( player -> {
                     player.getInventory().getItemInMainHand()
-                            .addEnchantment(choiceRandomEnchantment(),choiceRandomEnchantmentLevel());
+                            .addUnsafeEnchantment(choiceRandomEnchantment(),choiceRandomEnchantmentLevel());
                 });
     }
 
@@ -56,7 +56,12 @@ public class Blacksmith extends Ability {
 
     private int choiceRandomEnchantmentLevel(){
         int r = random.nextInt(100);
-        return percentEnchantLevels.stream().filter(integer -> r < integer).findFirst().get();
+        for(int i = 0; i < percentEnchantLevels.size(); i++){
+            if(r > percentEnchantLevels.get(i))
+                continue;
+            return i+1;
+        }
+        return 1;
     }
 
 }

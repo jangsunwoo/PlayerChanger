@@ -69,10 +69,24 @@ public class GameRepository {
     public void resetGame(Server server){
         GameController.curTime = 0;
         GameController.invPer = PlayInfo.inventoryChangePercent;
-        PlayInfo.participants.forEach(PlayInfo::resetPlayerAttribute);
-        PlayInfo.leaveParticipants.forEach(PlayInfo::resetPlayerAttribute);
+        resetScoreboard(server);
         PlayInfo.resetPlayInfo(); //TODO 무조건 뒤에 배치 (참가자 명단이 사라집니다.)
         AbilityInfo.resetAbilityInfo();
+        Util.makeGameMainSound();
+        server.getOnlinePlayers().forEach(player -> {
+            player.sendMessage(ChatColor.RED + "[PlayerChanger]: 게임이 종료되었습니다.");
+        });
+    }
+
+    private void resetScoreboard(Server server){
+        PlayInfo.participants.forEach(player -> {
+            PlayInfo.resetPlayerAttribute(player);
+            player.setScoreboard(server.getScoreboardManager().getMainScoreboard());
+        });
+        PlayInfo.leaveParticipants.forEach(player -> {
+            PlayInfo.resetPlayerAttribute(player);
+            player.setScoreboard(server.getScoreboardManager().getMainScoreboard());
+        });
     }
 
     public void makeGameScheduler(Server server){
@@ -111,6 +125,7 @@ public class GameRepository {
     }
 
     public void makeSettingInfoSchedule(Server server){
+        Util.makeGameMainSound();
         server.getScheduler().runTaskTimer(
                 PlayerChanger.playerChanger,
                 settingTask -> {
@@ -138,6 +153,7 @@ public class GameRepository {
         players.forEach(player -> {
             AbilityInfo.giveParticipantAbility(player, tmpAbilityCode.get(idx.getAndIncrement() % cycle));
         });
+        tmpAbilityCode.forEach(code -> Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + code.name()));
     }
 
     public void changeInventory(Server server) {

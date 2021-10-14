@@ -37,7 +37,7 @@ public class CommandsRepository implements ICommandRepository {
     public void executeAbility(Player player) {
         if(PlayInfo.gameStatus != PCH_Status.SETTING)
             return;
-        AbilityInfo.giveParticipantAbility(player, AbilityCode.Dandaegi);
+        AbilityInfo.giveParticipantAbility(player, AbilityCode.Golem);
     }
 
     @Override

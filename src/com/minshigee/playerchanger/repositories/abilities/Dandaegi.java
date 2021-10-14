@@ -19,7 +19,9 @@ public class Dandaegi extends Ability {
 
     public Dandaegi(){
         name = "단데기";
-        description = "체력이 낮을수록 더욱 단단해진다. 하지만 그만큼 공격 속도도 느려진다.";
+        description = "아주 단단한 곤충이군요. 죽음을 느낄수록 더 무겁고 단단한 벽으로 몸을 보호합니다.";
+        hurtSound = Sound.BLOCK_ANVIL_BREAK;
+        deathSound = Sound.ENTITY_SILVERFISH_DEATH;
     }
 
     @Override
@@ -29,41 +31,30 @@ public class Dandaegi extends Ability {
     }
 
     //TODO 단데기 이벤트 핸들링
-    public void mapDamagedEvent(EntityDamageEvent event){
-        if(event.getEntity().getType().equals(EntityType.PLAYER)){
-            Player tmpPlayer = (Player)event.getEntity();
-            if(AbilityInfo.isExistParticipantInAbilities(tmpPlayer, AbilityCode.Dandaegi)) {
-                ((Dandaegi)AbilityInfo.getAbilityObject(AbilityCode.Dandaegi))
-                        .damagedEventDandaegi(tmpPlayer, event);
-            }
+    public void mapDamagedEvent(Player player, EntityDamageEvent event){
+        if(AbilityInfo.isExistParticipantInAbilities(player, AbilityCode.Dandaegi)) {
+            ((Dandaegi)AbilityInfo.getAbilityObject(AbilityCode.Dandaegi))
+                    .damagedEventDandaegi(player, event);
         }
     }
-    public void mapAttackEvent(EntityDamageByEntityEvent event){
-        if(event.getDamager().getType().equals(EntityType.PLAYER)){
-            Player tmpPlayer = (Player)event.getDamager();
-            if(AbilityInfo.isExistParticipantInAbilities(tmpPlayer, AbilityCode.Dandaegi)) {
-                ((Dandaegi)AbilityInfo.getAbilityObject(AbilityCode.Dandaegi))
-                        .attackEventDandaegi(tmpPlayer, event);
-            }
+    public void mapAttackEvent(Player player, EntityDamageByEntityEvent event){
+        if(AbilityInfo.isExistParticipantInAbilities(player, AbilityCode.Dandaegi)) {
+            ((Dandaegi)AbilityInfo.getAbilityObject(AbilityCode.Dandaegi))
+                    .attackEventDandaegi(player, event);
         }
     }
 
     // TODO 단데기 능력 코드 업데이트.
     public void damagedEventDandaegi(Player player, EntityDamageEvent event) {
         double maxHealth = Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue();
-        double healthRatio = Math.max(player.getHealth() / maxHealth, 0.05D);
+        double healthRatio = Math.max(player.getHealth() / maxHealth, 0.03D);
         event.setDamage(event.getDamage() * healthRatio);
-        playDamagedSound(player);
     }
 
     public void attackEventDandaegi(Player player, EntityDamageByEntityEvent event){
         double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
         double healthRatio = player.getHealth() / maxHealth;
-        healthRatio = Math.max(player.getHealth() / maxHealth, 0.1D);
+        healthRatio = Math.max(player.getHealth() / maxHealth, 0.2D);
         player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(healthRatio);
-    }
-
-    public void playDamagedSound(Player player){
-        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 3, 1);
     }
 }

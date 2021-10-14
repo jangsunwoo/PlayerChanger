@@ -5,6 +5,7 @@ import com.minshigee.playerchanger.repositories.abilities.Dandaegi;
 import com.minshigee.playerchanger.domain.abilities.interfaces.AbilityCode;
 import com.minshigee.playerchanger.repositories.abilities.Blacksmith;
 import com.minshigee.playerchanger.repositories.abilities.GoldenPig;
+import com.minshigee.playerchanger.repositories.abilities.Golem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -20,18 +21,20 @@ public class AbilityInfo {
         put(AbilityCode.Dandaegi, new Dandaegi());
         put(AbilityCode.Blacksmith, new Blacksmith());
         put(AbilityCode.GoldenPig, new GoldenPig());
+        put(AbilityCode.Golem, new Golem());
     }};
 
     public static HashMap<AbilityCode, HashSet<Player>> participantAbilityInfo = new HashMap<>(){{
         put(AbilityCode.Dandaegi, new HashSet<>());
         put(AbilityCode.Blacksmith, new HashSet<>());
         put(AbilityCode.GoldenPig, new HashSet<>());
+        put(AbilityCode.Golem, new HashSet<>());
     }};
 
     public static HashMap<Player, AbilityCode> abilityParticipantInfo = new HashMap<>();
 
     public static boolean isExistParticipantInAbilities(Player player, AbilityCode code){
-        return participantAbilityInfo.get(code).stream().anyMatch(player::equals);
+        return participantAbilityInfo.get(code).contains(player);
     }
 
     public static void resetAbilityInfo(){
@@ -68,5 +71,17 @@ public class AbilityInfo {
 
     public static Ability getAbilityObject(AbilityCode code){
         return abilityMap.get(code);
+    }
+
+    public static void playAbilityHurtSound(Player player){
+        getAbilityObject(
+                abilityParticipantInfo.get(player)
+        ).playHurtSound(player);
+    }
+
+    public static void playAbilityDeathSound(Player player){
+        getAbilityObject(
+                abilityParticipantInfo.get(player)
+        ).playDeathSound(player);
     }
 }
