@@ -10,7 +10,10 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.w3c.dom.Attr;
+
+import java.util.Objects;
 
 public class Dandaegi extends Ability {
 
@@ -26,7 +29,7 @@ public class Dandaegi extends Ability {
     }
 
     //TODO 단데기 이벤트 핸들링
-    public void mapDamagedAndAttackEvent(EntityDamageByEntityEvent event){
+    public void mapDamagedEvent(EntityDamageEvent event){
         if(event.getEntity().getType().equals(EntityType.PLAYER)){
             Player tmpPlayer = (Player)event.getEntity();
             if(AbilityInfo.isExistParticipantInAbilities(tmpPlayer, AbilityCode.Dandaegi)) {
@@ -34,6 +37,8 @@ public class Dandaegi extends Ability {
                         .damagedEventDandaegi(tmpPlayer, event);
             }
         }
+    }
+    public void mapAttackEvent(EntityDamageByEntityEvent event){
         if(event.getDamager().getType().equals(EntityType.PLAYER)){
             Player tmpPlayer = (Player)event.getDamager();
             if(AbilityInfo.isExistParticipantInAbilities(tmpPlayer, AbilityCode.Dandaegi)) {
@@ -44,8 +49,8 @@ public class Dandaegi extends Ability {
     }
 
     // TODO 단데기 능력 코드 업데이트.
-    public void damagedEventDandaegi(Player player, EntityDamageByEntityEvent event) {
-        double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+    public void damagedEventDandaegi(Player player, EntityDamageEvent event) {
+        double maxHealth = Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue();
         double healthRatio = Math.max(player.getHealth() / maxHealth, 0.05D);
         event.setDamage(event.getDamage() * healthRatio);
         playDamagedSound(player);
@@ -59,6 +64,6 @@ public class Dandaegi extends Ability {
     }
 
     public void playDamagedSound(Player player){
-        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 1, 1);
+        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_BREAK, 3, 1);
     }
 }

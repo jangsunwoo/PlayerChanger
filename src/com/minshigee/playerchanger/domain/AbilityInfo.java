@@ -4,6 +4,7 @@ import com.minshigee.playerchanger.domain.abilities.Ability;
 import com.minshigee.playerchanger.repositories.abilities.Dandaegi;
 import com.minshigee.playerchanger.domain.abilities.interfaces.AbilityCode;
 import com.minshigee.playerchanger.repositories.abilities.Blacksmith;
+import com.minshigee.playerchanger.repositories.abilities.GoldenPig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -11,17 +12,20 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class AbilityInfo {
 
     public static final HashMap<AbilityCode, Ability> abilityMap = new HashMap<>(){{
         put(AbilityCode.Dandaegi, new Dandaegi());
         put(AbilityCode.Blacksmith, new Blacksmith());
+        put(AbilityCode.GoldenPig, new GoldenPig());
     }};
 
-    public static HashMap<AbilityCode, ArrayList<Player>> participantAbilityInfo = new HashMap<>(){{
-        put(AbilityCode.Dandaegi, new ArrayList<>());
-        put(AbilityCode.Blacksmith, new ArrayList<>());
+    public static HashMap<AbilityCode, HashSet<Player>> participantAbilityInfo = new HashMap<>(){{
+        put(AbilityCode.Dandaegi, new HashSet<>());
+        put(AbilityCode.Blacksmith, new HashSet<>());
+        put(AbilityCode.GoldenPig, new HashSet<>());
     }};
 
     public static HashMap<Player, AbilityCode> abilityParticipantInfo = new HashMap<>();
