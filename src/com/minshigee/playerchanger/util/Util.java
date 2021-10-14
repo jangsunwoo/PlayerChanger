@@ -12,9 +12,9 @@ public class Util {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
     }
     //TODO PARTICLE DATA
-    public static void makeDanDaegiParticle(Player player){
+    public static void makeGettingAbilityParticle(Player player, Particle particle){
         for(int i = 0; i < 5; i++)
-            player.spawnParticle(Particle.VILLAGER_HAPPY, player.getLocation().add(0,1,0), 5);
+            player.spawnParticle(particle, player.getLocation().add(0,i,0), 5);
     }
 
     //TODO SOUND DATA

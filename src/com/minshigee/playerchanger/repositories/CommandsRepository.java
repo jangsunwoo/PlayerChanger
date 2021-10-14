@@ -71,11 +71,8 @@ public class CommandsRepository implements ICommandRepository {
     @NeedPermission
     public void executeReadyAll(Player player) {
         player.getServer().getOnlinePlayers().stream()
-                .filter(p ->
-                        !PlayInfo.isExistParticipant(p)
-                ).forEach(p ->
-                PlayInfo.addParticipant(p)
-        );
+                .filter(p -> !PlayInfo.isExistParticipant(p))
+                .forEach(PlayInfo::addParticipant);
     }
 
     @Override

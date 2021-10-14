@@ -4,6 +4,7 @@ import com.minshigee.playerchanger.controllers.AbilitiesController;
 import com.minshigee.playerchanger.controllers.CommandsController;
 import com.minshigee.playerchanger.controllers.EventsController;
 import com.minshigee.playerchanger.repositories.CommandsRepository;
+import com.minshigee.playerchanger.repositories.EventsRepository;
 import com.minshigee.playerchanger.views.GameView;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,7 +30,7 @@ public class PlayerChanger extends JavaPlugin {
     private void init(){
 
         getServer().getPluginManager().registerEvents(
-                new EventsController(),
+                new EventsController(new EventsRepository()),
                 this
         );
         getServer().getPluginManager().registerEvents(

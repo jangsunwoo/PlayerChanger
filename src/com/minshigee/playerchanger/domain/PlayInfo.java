@@ -1,16 +1,20 @@
 package com.minshigee.playerchanger.domain;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class PlayInfo {
 
     public static Integer maxParticipantSize = 16;
     public static Integer timeCycle = 60;
-    public static Integer blockRemoveCycle = 30;
+    public static Integer blockRemoveCycle = 10;
 
     public static Integer inventoryChangePercent = 30;
     public static PCH_Status gameStatus = PCH_Status.DISABLED;
@@ -77,5 +81,22 @@ public class PlayInfo {
 
     public static void clearStartLocations(){
         startLocations.clear();
+    }
+
+    public static void resetPlayInfo() {
+        PlayInfo.gameStatus = PCH_Status.DISABLED;
+        PlayInfo.leaveParticipants.stream()
+                .filter(player -> player.getGameMode() == GameMode.SPECTATOR)
+                .forEach(player -> player.setGameMode(GameMode.SURVIVAL));
+        PlayInfo.participants.clear();
+        PlayInfo.leaveParticipants.clear();
+    }
+    public static void resetPlayerAttribute(Player player){
+        Arrays.stream(Attribute.values()).forEach(attribute -> resetAttribute(player,attribute));
+    }
+    private static void resetAttribute(Player player, Attribute attribute){
+        Objects.requireNonNull(player.getAttribute(attribute)).setBaseValue(
+                Objects.requireNonNull(player.getAttribute(attribute)).getDefaultValue()
+        );
     }
 }

@@ -4,6 +4,7 @@ import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.domain.PlayInfo;
 import com.minshigee.playerchanger.domain.PCH_Status;
 import com.minshigee.playerchanger.repositories.GameRepository;
+import com.minshigee.playerchanger.repositories.TaskRepository;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -12,7 +13,7 @@ public class GameController {
 
     public static int curTime = 0;
     public static int invPer = 30;
-    private static final GameRepository repository = new GameRepository();
+    private static final GameRepository repository = new GameRepository(new TaskRepository());
 
     public static void startGame(Player player){
         if(PlayInfo.gameStatus == PCH_Status.DISABLED){
@@ -40,7 +41,7 @@ public class GameController {
     }
 
     public static void stopGame(){
-        repository.resetGameStopping(PlayerChanger.playerChanger.getServer());
+        repository.resetGame(PlayerChanger.playerChanger.getServer());
     }
 
 }
