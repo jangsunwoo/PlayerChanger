@@ -1,47 +1,102 @@
 package com.minshigee.playerchanger;
 
-import com.minshigee.playerchanger.controllers.AbilitiesController;
-import com.minshigee.playerchanger.controllers.CommandsController;
-import com.minshigee.playerchanger.controllers.EventsController;
-import com.minshigee.playerchanger.domain.AbilityInfo;
-import com.minshigee.playerchanger.repositories.CommandsRepository;
-import com.minshigee.playerchanger.repositories.EventsRepository;
-import com.minshigee.playerchanger.views.GameView;
-import org.bukkit.Bukkit;
+import com.minshigee.playerchanger.constant.ConsoleLogs;
+import com.minshigee.playerchanger.logic.CommandsExecutor;
+import com.minshigee.playerchanger.logic.EventsListener;
+import com.minshigee.playerchanger.logic.ability.AbilitiesController;
+import com.minshigee.playerchanger.logic.ability.AbilitiesData;
+import com.minshigee.playerchanger.logic.ability.AbilitiesRepository;
+import com.minshigee.playerchanger.logic.change.ChangeController;
+import com.minshigee.playerchanger.logic.change.ChangeData;
+import com.minshigee.playerchanger.logic.change.ChangeRepository;
+import com.minshigee.playerchanger.logic.game.GameController;
+import com.minshigee.playerchanger.logic.game.GameData;
+import com.minshigee.playerchanger.logic.game.GameRepositoy;
+import com.minshigee.playerchanger.logic.mission.MissionController;
+import com.minshigee.playerchanger.logic.mission.MissionData;
+import com.minshigee.playerchanger.logic.mission.MissionRepository;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.HashMap;
 
 public class PlayerChanger extends JavaPlugin {
 
-    public static PlayerChanger playerChanger = null;
+    public static FileConfiguration config;
+    private static HashMap<Class, Object> Container = new HashMap<>();
+
+    public static<T> T getInstanceOfClass(Class cls){
+        return (T) Container.get(cls);
+    }
 
     @Override
     public void onEnable() {
-
-        playerChanger = this;
-        init();
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[PlayerChanger] Plugin is enabled!");
+        super.onEnable();
+        initPlugin();
+        ConsoleLogs.printConsoleLog(ChatColor.GREEN + "작동되었습니다.");
     }
 
     @Override
     public void onDisable() {
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[PlayerChanger] Plugin is disabled!");
+        super.onDisable();
+        ConsoleLogs.printConsoleLog(ChatColor.GREEN + "종료되었습니다.");
     }
 
-    private void init(){
-        AbilityInfo.resetAbilityDataSet();
-        getServer().getPluginManager().registerEvents(
-                new AbilitiesController(),
+    private void initPlugin() {
+        this.saveDefaultConfig();
+        config = this.getConfig();
+
+        registerModules();
+        registerCommandExecutor();
+        registerEventListener();
+        //logDIResult();
+    }
+
+    private void registerModules(){
+        registerModule(GameController.class, GameRepositoy.class, GameData.class);
+        registerModule(AbilitiesController.class, AbilitiesRepository.class, AbilitiesData.class);
+        registerModule(ChangeController.class, ChangeRepository.class, ChangeData.class);
+        registerModule(MissionController.class, MissionRepository.class, MissionData.class);
+    }
+
+    private <T,K,S> void registerModule(T conClass, K repoClass, S dbClass){
+        try {
+            S tmpDB = (S) ((Class)dbClass).getConstructor().newInstance();
+            K tmpRepo = (K) ((Class)repoClass).getConstructor(tmpDB.getClass()).newInstance(tmpDB);
+            T tmpCont = (T) ((Class)conClass).getConstructor(tmpRepo.getClass()).newInstance(tmpRepo);
+            injectDependency(tmpDB);
+            injectDependency(tmpRepo);
+            injectDependency(tmpCont);
+        }
+        catch (Exception e){
+            ConsoleLogs.printConsoleLog(ChatColor.RED + "DI에 실패했습니다. { " + ((Class)conClass).getName() + " } 관련 모듈.");
+        }
+    }
+
+    private void registerEventListener(){
+        this.getPluginLoader().createRegisteredListeners(
+                injectDependency(new EventsListener()),
                 this
         );
-        getServer().getPluginManager().registerEvents(
-                new EventsController(new EventsRepository()),
-                this
-        );
+    }
 
+    private void registerCommandExecutor(){
+        try {
+            this.getCommand("ph").setExecutor(injectDependency(new CommandsExecutor()));
+        }
+        catch (Exception e){
+            ConsoleLogs.printConsoleLog(ChatColor.RED + " 명령어 등록에 실패했습니다.");
+        }
+    }
 
-        getCommand("pch").setExecutor(new CommandsController(new CommandsRepository()));
+    private void logDIResult(){
+        Container.keySet().forEach(o -> ConsoleLogs.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getName()));
+        Container.values().forEach(o -> ConsoleLogs.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getClass().getName()));
+    }
 
-        GameView.playStatusBoardManager = Bukkit.getScoreboardManager();
+    private <T> T injectDependency(T instance){
+        Container.put(instance.getClass(), instance);
+        return instance;
     }
 }

@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Changed Chaser:jar">
+    <output-path>E:/서버/TestBukkit/1.16.5/plugins</output-path>
+    <root id="archive" name="Changed Chaser.jar">
+      <element id="module-output" name="Changed Chaser" />
+      <element id="extracted-dir" path="$USER_HOME$/Documents/Dependencies/spigot-1.16.5.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

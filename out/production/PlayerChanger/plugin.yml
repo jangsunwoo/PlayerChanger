@@ -1,9 +1,0 @@
-name: PlayerChanger
-version: 1.0
-author: minshigee
-main: com.minshigee.playerchanger.PlayerChanger
-api-version: 1.16
-commands:
-  pch:
-    description: about PlayerChanger
-    usage: /<command>

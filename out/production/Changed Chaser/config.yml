@@ -1,0 +1,12 @@
+
+#################################
+UsingAbility: true
+UsingChanging: true
+UsingMission: true #false인 경우 타이머로 진행
+#################################
+
+GameWorldMaxPosition: []
+MissionSolvingLocation: []
+
+StartPoints:
+  Locations: []

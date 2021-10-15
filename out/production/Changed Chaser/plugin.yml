@@ -1,9 +1,9 @@
 name: ChangedChaser
 version: 1.0
 author: minshigee
-main: com.minshigee.playerchanger.PlayerChanger
+main: com.minshigee.changedchaser.ChangedChaser
 api-version: 1.16
 commands:
     ph:
-        description: Player Changer commands
+        description: Changed Chaser commands
         usage: /<command>
