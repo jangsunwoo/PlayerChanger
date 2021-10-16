@@ -15,6 +15,7 @@ import com.minshigee.playerchanger.logic.game.GameRepositoy;
 import com.minshigee.playerchanger.logic.mission.MissionController;
 import com.minshigee.playerchanger.logic.mission.MissionData;
 import com.minshigee.playerchanger.logic.mission.MissionRepository;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,6 +27,7 @@ public class PlayerChanger extends JavaPlugin {
 
     public static FileConfiguration config;
     private static HashMap<Class, Object> Container = new HashMap<>();
+    public static PlayerChanger singleton;
 
     public static Object getInstanceOfClass(Class cls){
         return Container.get(cls);
@@ -37,6 +39,7 @@ public class PlayerChanger extends JavaPlugin {
     @Override
     public void onEnable() {
         super.onEnable();
+        singleton = this;
         initPlugin();
         ConsoleLogs.printConsoleLog(ChatColor.GREEN + "작동되었습니다.");
     }
@@ -48,8 +51,9 @@ public class PlayerChanger extends JavaPlugin {
     }
 
     private void initPlugin() {
-        this.saveDefaultConfig();
         config = this.getConfig();
+        config.options().copyDefaults(true);
+        saveConfig();
 
         registerModules();
         registerCommandExecutor();
@@ -79,7 +83,7 @@ public class PlayerChanger extends JavaPlugin {
     }
 
     private void registerEventListener(){
-        this.getPluginLoader().createRegisteredListeners(
+        Bukkit.getPluginManager().registerEvents(
                 registerInstanceToContainer(new EventsListener()),
                 this
         );
@@ -94,13 +98,14 @@ public class PlayerChanger extends JavaPlugin {
         }
     }
 
+    private <T> T registerInstanceToContainer(T instance){
+        Container.put(instance.getClass(), instance);
+        return instance;
+    }
+
     private void logDIResult(){
         Container.keySet().forEach(o -> ConsoleLogs.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getName()));
         Container.values().forEach(o -> ConsoleLogs.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getClass().getName()));
     }
 
-    private <T> T registerInstanceToContainer(T instance){
-        Container.put(instance.getClass(), instance);
-        return instance;
-    }
 }

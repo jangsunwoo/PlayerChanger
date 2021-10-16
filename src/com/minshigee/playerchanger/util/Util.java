@@ -11,7 +11,9 @@ import java.util.stream.Collectors;
 public class Util {
     public static Set<Class> getMappableControllers(){
         return PlayerChanger.getContainerKeys().stream()
-                .filter(aClass -> aClass.getDeclaredAnnotation(IsController.class) != null)
+                .filter(aClass -> {
+                    return aClass.getDeclaredAnnotation(IsController.class) != null;
+                })
                 .filter(aClass -> {
                     try {
                         return ((Controller)PlayerChanger.getInstanceOfClass(aClass)).getIsAvailable();

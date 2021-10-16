@@ -10,6 +10,6 @@ public class ConsoleLogs {
         Bukkit.getConsoleSender().sendMessage(prefix + msg);
     }
     public static void printLogToPlayer(Player player, String msg){
-        Bukkit.getConsoleSender().sendMessage(prefix + msg);
+        player.sendMessage(prefix + msg);
     }
 }

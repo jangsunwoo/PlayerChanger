@@ -10,25 +10,34 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class EventsListener implements Listener {
-    private HashMap<Class,HashSet<Method>> avilableMethods = new HashMap<>();
+    private HashMap<String,HashSet<Method>> avilableMethods = new HashMap<>();
 
     @EventHandler
     public void damagedPlayer(EntityDamageEvent event){
         if(!(event.getEntity() instanceof Player))
             return;
+        executeEventMethod(event.getEventName(),event);
         if(GameData.getParticipantByPlayer((Player)event.getEntity()).isPresent()){
-            executeEventMethod(event);
+            executeEventMethod(event.getEventName(),event);
         }
+    }
+    @EventHandler
+    public void interactPlayer(PlayerInteractEvent event){
+        executeEventMethod(event.getEventName(),event);
     }
 
     public EventsListener(){
+        ConsoleLogs.printConsoleLog(ChatColor.DARK_AQUA + "이벤트 등록을 시작합니다.");
         validateAvailableMethods();
     }
 
@@ -38,18 +47,24 @@ public class EventsListener implements Listener {
                             .filter(method -> {
                                 return method.getDeclaredAnnotation(MappingEvent.class) != null;
                             }).filter(method -> method.getParameterCount() == 1)
-                            .forEach(method -> registerAvailableMethods(method.getParameters()[0], method));
+                            .forEach(method -> {
+                                registerAvailableMethods(method.getParameters()[0].getType().getSimpleName(), method);
+                            });
                 });
+        ConsoleLogs.printConsoleLog(ChatColor.DARK_AQUA + "이벤트 등록이 끝났습니다.");
     }
 
-    private<T> void registerAvailableMethods(T event, Method method){
-        avilableMethods.computeIfAbsent(event.getClass(), k -> new HashSet<>());
-        avilableMethods.get(event.getClass()).add(method);
+    private void registerAvailableMethods(String typeName, Method method){
+        avilableMethods.computeIfAbsent(typeName, k -> new HashSet<>());
+        avilableMethods.get(typeName).add(method);
+        ConsoleLogs.printConsoleLog(ChatColor.GREEN + typeName + "의 " + method.getName() + "이 등록되었습니다.");
     }
 
-    private <T> void executeEventMethod(T event){
-        avilableMethods.get(event.getClass()).forEach(method -> {
-            if(Arrays.stream(((MappingEvent) method.getDeclaredAnnotation(MappingEvent.class)).states())
+    private <T> void executeEventMethod(String typeName, T event){
+        if(avilableMethods.get(typeName) == null)
+            return;
+        avilableMethods.get(typeName).forEach(method -> {
+            if(Arrays.stream(method.getDeclaredAnnotation(MappingEvent.class).states())
                     .anyMatch(gameState -> gameState.equals(GameData.getGameState()))){
                 try {
                     method.invoke(PlayerChanger.getInstanceOfClass(method.getDeclaringClass()), event);

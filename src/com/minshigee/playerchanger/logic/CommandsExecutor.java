@@ -20,16 +20,21 @@ public class CommandsExecutor implements CommandExecutor{
     private HashMap<String,Method> availableCommands = new HashMap<>();
 
     public CommandsExecutor(){
+        ConsoleLogs.printConsoleLog(ChatColor.DARK_AQUA + "커맨드 등록을 시작합니다.");
         validateCommand();
     }
 
     private void validateCommand(){
-        Util.getMappableControllers().forEach(aClass -> Arrays.stream(aClass.getDeclaredMethods())
-                .filter(method -> method.getDeclaredAnnotation(MappingCommand.class) != null).filter(method -> method.getParameterCount() == 2)
-                .forEach(method -> {
-                    MappingCommand metaCommand = method.getDeclaredAnnotation(MappingCommand.class);
-                    registerAvailableMethods(metaCommand.arg(), method);
-                }));
+        Util.getMappableControllers().forEach(aClass -> {
+            Arrays.stream(aClass.getDeclaredMethods())
+                    .filter(method -> method.getDeclaredAnnotation(MappingCommand.class) != null).filter(method -> method.getParameterCount() == 2)
+                    .forEach(method -> {
+                        MappingCommand metaCommand = method.getDeclaredAnnotation(MappingCommand.class);
+                        registerAvailableMethods(metaCommand.arg(), method);
+                        ConsoleLogs.printConsoleLog(ChatColor.GREEN + metaCommand.arg() + " 커맨드가 등록되었습니다.");
+                    });
+        });
+        ConsoleLogs.printConsoleLog(ChatColor.DARK_AQUA + "커맨드 등록이 끝났습니다.");
     }
 
     private void registerAvailableMethods(String arg, Method method){

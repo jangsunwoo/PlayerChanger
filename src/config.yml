@@ -1,12 +1,25 @@
-
-#################################
 UsingAbility: true
 UsingChanging: true
-UsingMission: true #false인 경우 타이머로 진행
-#################################
-
-GameWorldMaxPosition: []
-MissionSolvingLocation: []
-
-StartPoints:
-  Locations: []
+UsingMission: true
+SpawnBlock: YELLOW_CONCRETE
+MissionAssignBlock: EMERALD_BLOCK
+GameWorld:
+  StartLocations: []
+  MissionLocations: []
+  MissionAssignLocations: []
+  Size_Pos1:
+    ==: org.bukkit.Location
+    world: world
+    x: 0.5
+    y: 64.0
+    z: 0.5
+    pitch: 90.0
+    yaw: 38.099976
+  Size_Pos2:
+    ==: org.bukkit.Location
+    world: world
+    x: 0.5
+    y: 64.0
+    z: 0.5
+    pitch: 90.0
+    yaw: 38.39998

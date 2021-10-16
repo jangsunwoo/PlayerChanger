@@ -63,17 +63,18 @@ public class GameData extends Data {
     private final Inventory emptyInventory = Bukkit.createInventory(null, InventoryType.PLAYER);
     private ItemStack[] settingItems = {
             new ItemStack(Material.BLAZE_ROD, 1),
-            new ItemStack(Material.ARROW, 1),
-            new ItemStack(Material.BONE, 1)
+            new ItemStack(Material.ARROW, 1)
     };
+    public boolean checkPlayerIsSetter(Player player){
+        return setters.contains(player);
+    }
     public void addSetter(Player player) {
         setters.add(player);
         tmpSaveInventory.put(player, player.getInventory().getContents());
         player.getInventory().setContents(
             emptyInventory.getContents()
         );
-        player.getInventory().addItem();
-
+        player.getInventory().addItem(settingItems);
     }
     public void removeSetter(Player player){setters.remove(player);player.getInventory().setContents(tmpSaveInventory.get(player));tmpSaveInventory.remove(player);}
     public void clearSettingData(){setters.forEach(this::removeSetter);setters.clear();tmpSaveInventory.clear();}
@@ -85,8 +86,11 @@ public class GameData extends Data {
          setSettingItems();
     }
     private void setSettingItems(){
-        Objects.requireNonNull(settingItems[0].getItemMeta()).setDisplayName("시작 좌표(좌_삭제/우_추가)");
-        Objects.requireNonNull(settingItems[1].getItemMeta()).setDisplayName("미션(상자) 좌표(좌_삭제/우_추가)");
-        Objects.requireNonNull(settingItems[2].getItemMeta()).setDisplayName("미션 완료 좌표(좌_삭제/우_추가)");
+        ItemMeta meta = settingItems[0].getItemMeta();
+        meta.setDisplayName("게임 월드 범위 설정(좌_pos1/우_pos2)");
+        settingItems[0].setItemMeta(meta);
+        meta = settingItems[1].getItemMeta();
+        meta.setDisplayName("블럭 설정(좌_스폰 블럭/우_미션 반납 명령)");
+        settingItems[1].setItemMeta(meta);
     }
 }
