@@ -1,10 +1,10 @@
 package com.minshigee.playerchanger.logic;
 
 import com.minshigee.playerchanger.PlayerChanger;
-import com.minshigee.playerchanger.constant.ConsoleLogs;
-import com.minshigee.playerchanger.domain.CommandInfo;
-import com.minshigee.playerchanger.domain.annitation.NeedOP;
-import com.minshigee.playerchanger.logic.game.GameController;
+import com.minshigee.playerchanger.domain.annotation.MappingCommand;
+import com.minshigee.playerchanger.logic.game.GameData;
+import com.minshigee.playerchanger.util.ConsoleLogs;
+import com.minshigee.playerchanger.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,66 +12,43 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.HashMap;
 
 public class CommandsExecutor implements CommandExecutor{
 
-    private final CommandInfo[] gameCommands = {
-            new CommandInfo("help", getMethod(GameController.class,"executeHelp"))
-    };
-    private final CommandInfo[] abilityCommands = {
+    private HashMap<String,Method> availableCommands = new HashMap<>();
 
-    };
-    private final CommandInfo[] missionCommands = {
-
-    };
-    private final CommandInfo[] changeCommands = {
-
-    };
-
-    private final ArrayList<CommandInfo[]> commands = new ArrayList<>(
-            Arrays.asList(
-                    gameCommands,
-                    abilityCommands,
-                    missionCommands,
-                    changeCommands
-            )
-    );
-
-    private Method getMethod(Class cls, String str){
-        try {
-            return Arrays.stream(cls.getDeclaredMethods())
-                    .filter(method -> method.getName().equals(str))
-                    .findFirst().get();
-        }
-        catch (Exception e){
-            ConsoleLogs.printConsoleLog(ChatColor.RED + cls.getName() + "의 " + str + "을 불러오지 못했습니다.");
-        }
-        return null;
+    public CommandsExecutor(){
+        validateCommand();
     }
 
-    private void executeCommandMethod(Method method, Player player, String[] args){
-        try {
-            method.invoke(PlayerChanger.getInstanceOfClass(method.getDeclaringClass()), player, args);
-        }
-        catch (Exception e){
-            ConsoleLogs.printConsoleLog(ChatColor.RED + "명령어 실행 중에 오류가 발생했습니다.");
-        }
+    private void validateCommand(){
+        Util.getMappableControllers().forEach(aClass -> Arrays.stream(aClass.getDeclaredMethods())
+                .filter(method -> method.getDeclaredAnnotation(MappingCommand.class) != null).filter(method -> method.getParameterCount() == 2)
+                .forEach(method -> {
+                    MappingCommand metaCommand = method.getDeclaredAnnotation(MappingCommand.class);
+                    registerAvailableMethods(metaCommand.arg(), method);
+                }));
     }
 
-    private void validatePermissionAndExecute(Method method, Player player, String[] args){
-        NeedOP needOp = method.getDeclaredAnnotation(NeedOP.class);
-        if(needOp == null){
-            executeCommandMethod(method, player, args);
+    private void registerAvailableMethods(String arg, Method method){
+        availableCommands.put(arg,method);
+    }
+
+    private void executeAvailableMethod(Player sender, String[] args){
+        Method method = availableCommands.get(args[0]);
+        MappingCommand metaCommand = method.getDeclaredAnnotation(MappingCommand.class);
+        if(metaCommand.needOp() && !sender.isOp())
             return;
-        }
-        if(needOp.value() && player.isOp()){
-            executeCommandMethod(method, player, args);
+        if(Arrays.stream(metaCommand.states()).noneMatch(gameState -> gameState.equals(GameData.getGameState())))
             return;
+        try {
+            method.invoke(PlayerChanger.getInstanceOfClass(method.getDeclaringClass()),sender,args);
         }
-        ConsoleLogs.printLogToPlayer(player,ChatColor.RED + "권한이 없는 명령어입니다.");
+        catch (Exception e){
+            ConsoleLogs.printLogToPlayer(sender, ChatColor.RED + args[0] + " 명령을 실행하는데 실패했습니다.");
+        }
     }
 
     @Override
@@ -83,19 +60,8 @@ public class CommandsExecutor implements CommandExecutor{
         if(args.length < 1)
             return true;
 
-        AtomicBoolean isExecute = new AtomicBoolean(false);
-        for(CommandInfo[] cmds : commands){
-            Arrays.stream(cmds)
-                    .filter(_cmd -> _cmd.command.equalsIgnoreCase(args[0]))
-                    .findFirst().ifPresent(_cmd ->{
-                        isExecute.set(true);
-                        validatePermissionAndExecute(_cmd.method, (Player)sender, args);
-                    });
-            if(isExecute.get())
-                break;
-        }
+        executeAvailableMethod((Player)sender, args);
+
         return true;
     }
-
-
 }

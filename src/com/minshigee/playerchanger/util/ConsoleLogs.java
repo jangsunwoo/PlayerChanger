@@ -1,4 +1,4 @@
-package com.minshigee.playerchanger.constant;
+package com.minshigee.playerchanger.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

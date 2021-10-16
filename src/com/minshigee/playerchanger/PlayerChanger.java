@@ -1,6 +1,6 @@
 package com.minshigee.playerchanger;
 
-import com.minshigee.playerchanger.constant.ConsoleLogs;
+import com.minshigee.playerchanger.util.ConsoleLogs;
 import com.minshigee.playerchanger.logic.CommandsExecutor;
 import com.minshigee.playerchanger.logic.EventsListener;
 import com.minshigee.playerchanger.logic.ability.AbilitiesController;
@@ -20,14 +20,18 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.Set;
 
 public class PlayerChanger extends JavaPlugin {
 
     public static FileConfiguration config;
     private static HashMap<Class, Object> Container = new HashMap<>();
 
-    public static<T> T getInstanceOfClass(Class cls){
-        return (T) Container.get(cls);
+    public static Object getInstanceOfClass(Class cls){
+        return Container.get(cls);
+    }
+    public static Set<Class> getContainerKeys(){
+        return Container.keySet();
     }
 
     @Override
@@ -54,20 +58,20 @@ public class PlayerChanger extends JavaPlugin {
     }
 
     private void registerModules(){
-        registerModule(GameController.class, GameRepositoy.class, GameData.class);
-        registerModule(AbilitiesController.class, AbilitiesRepository.class, AbilitiesData.class);
-        registerModule(ChangeController.class, ChangeRepository.class, ChangeData.class);
-        registerModule(MissionController.class, MissionRepository.class, MissionData.class);
+        injectDependency(GameController.class, GameRepositoy.class, GameData.class);
+        injectDependency(AbilitiesController.class, AbilitiesRepository.class, AbilitiesData.class);
+        injectDependency(ChangeController.class, ChangeRepository.class, ChangeData.class);
+        injectDependency(MissionController.class, MissionRepository.class, MissionData.class);
     }
 
-    private <T,K,S> void registerModule(T conClass, K repoClass, S dbClass){
+    private <T,K,S> void injectDependency(T conClass, K repoClass, S dbClass){
         try {
             S tmpDB = (S) ((Class)dbClass).getConstructor().newInstance();
             K tmpRepo = (K) ((Class)repoClass).getConstructor(tmpDB.getClass()).newInstance(tmpDB);
             T tmpCont = (T) ((Class)conClass).getConstructor(tmpRepo.getClass()).newInstance(tmpRepo);
-            injectDependency(tmpDB);
-            injectDependency(tmpRepo);
-            injectDependency(tmpCont);
+            registerInstanceToContainer(tmpDB);
+            registerInstanceToContainer(tmpRepo);
+            registerInstanceToContainer(tmpCont);
         }
         catch (Exception e){
             ConsoleLogs.printConsoleLog(ChatColor.RED + "DI에 실패했습니다. { " + ((Class)conClass).getName() + " } 관련 모듈.");
@@ -76,14 +80,14 @@ public class PlayerChanger extends JavaPlugin {
 
     private void registerEventListener(){
         this.getPluginLoader().createRegisteredListeners(
-                injectDependency(new EventsListener()),
+                registerInstanceToContainer(new EventsListener()),
                 this
         );
     }
 
     private void registerCommandExecutor(){
         try {
-            this.getCommand("ph").setExecutor(injectDependency(new CommandsExecutor()));
+            this.getCommand("ph").setExecutor(registerInstanceToContainer(new CommandsExecutor()));
         }
         catch (Exception e){
             ConsoleLogs.printConsoleLog(ChatColor.RED + " 명령어 등록에 실패했습니다.");
@@ -95,7 +99,7 @@ public class PlayerChanger extends JavaPlugin {
         Container.values().forEach(o -> ConsoleLogs.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getClass().getName()));
     }
 
-    private <T> T injectDependency(T instance){
+    private <T> T registerInstanceToContainer(T instance){
         Container.put(instance.getClass(), instance);
         return instance;
     }

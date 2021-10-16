@@ -1,4 +1,4 @@
-package com.minshigee.playerchanger.domain.annitation;
+package com.minshigee.playerchanger.domain.annotation;
 
 import java.lang.annotation.*;
 

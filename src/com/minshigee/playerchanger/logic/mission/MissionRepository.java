@@ -6,4 +6,5 @@ public class MissionRepository extends Repository<MissionData> {
     public MissionRepository(MissionData localDB) {
         super(localDB);
     }
+
 }

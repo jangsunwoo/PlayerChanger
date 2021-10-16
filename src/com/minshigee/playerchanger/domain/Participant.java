@@ -1,6 +1,5 @@
 package com.minshigee.playerchanger.domain;
 
-import com.minshigee.playerchanger.constant.Role;
 import com.minshigee.playerchanger.domain.interface_.IParticipant;
 import org.bukkit.entity.Player;
 

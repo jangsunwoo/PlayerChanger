@@ -1,8 +1,7 @@
-package com.minshigee.playerchanger.constant;
+package com.minshigee.playerchanger.domain;
 
 public enum GameState {
     Disable,
-    Setting,
     Waitting,
     Enable,
     Freezing
