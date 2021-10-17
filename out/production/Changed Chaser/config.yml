@@ -1,13 +1,22 @@
 UsingAbility: true
 UsingChanging: true
 UsingMission: true
-
+SpawnBlock: YELLOW_CONCRETE
+MissionAssignBlock: EMERALD_BLOCK
 GameWorld:
-  Size_Pos1: 0
-  Size_Pos2: 0
-  StartLocations: []
-  MissionLocations: []
-  MissionAssignLocations: []
-
-SpawnBlock: 0
-MissionAssignBlock: 0
+  Size_Pos1:
+    ==: org.bukkit.Location
+    world: world
+    x: 0.5
+    y: 64.0
+    z: 0.5
+    pitch: 90.0
+    yaw: 38.099976
+  Size_Pos2:
+    ==: org.bukkit.Location
+    world: world
+    x: 0.5
+    y: 64.0
+    z: 0.5
+    pitch: 90.0
+    yaw: 38.39998

@@ -1,6 +1,6 @@
 package com.minshigee.playerchanger;
 
-import com.minshigee.playerchanger.util.ConsoleLogs;
+import com.minshigee.playerchanger.util.MessageUtil;
 import com.minshigee.playerchanger.logic.CommandsExecutor;
 import com.minshigee.playerchanger.logic.EventsListener;
 import com.minshigee.playerchanger.logic.ability.AbilitiesController;
@@ -41,13 +41,13 @@ public class PlayerChanger extends JavaPlugin {
         super.onEnable();
         singleton = this;
         initPlugin();
-        ConsoleLogs.printConsoleLog(ChatColor.GREEN + "작동되었습니다.");
+        MessageUtil.printConsoleLog(ChatColor.GREEN + "작동되었습니다.");
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
-        ConsoleLogs.printConsoleLog(ChatColor.GREEN + "종료되었습니다.");
+        MessageUtil.printConsoleLog(ChatColor.GREEN + "종료되었습니다.");
     }
 
     private void initPlugin() {
@@ -78,7 +78,7 @@ public class PlayerChanger extends JavaPlugin {
             registerInstanceToContainer(tmpCont);
         }
         catch (Exception e){
-            ConsoleLogs.printConsoleLog(ChatColor.RED + "DI에 실패했습니다. { " + ((Class)conClass).getName() + " } 관련 모듈.");
+            MessageUtil.printConsoleLog(ChatColor.RED + "DI에 실패했습니다. { " + ((Class)conClass).getName() + " } 관련 모듈.");
         }
     }
 
@@ -94,7 +94,7 @@ public class PlayerChanger extends JavaPlugin {
             this.getCommand("ph").setExecutor(registerInstanceToContainer(new CommandsExecutor()));
         }
         catch (Exception e){
-            ConsoleLogs.printConsoleLog(ChatColor.RED + " 명령어 등록에 실패했습니다.");
+            MessageUtil.printConsoleLog(ChatColor.RED + " 명령어 등록에 실패했습니다.");
         }
     }
 
@@ -104,8 +104,8 @@ public class PlayerChanger extends JavaPlugin {
     }
 
     private void logDIResult(){
-        Container.keySet().forEach(o -> ConsoleLogs.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getName()));
-        Container.values().forEach(o -> ConsoleLogs.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getClass().getName()));
+        Container.keySet().forEach(o -> MessageUtil.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getName()));
+        Container.values().forEach(o -> MessageUtil.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getClass().getName()));
     }
 
 }

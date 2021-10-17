@@ -1,6 +1,6 @@
 package com.minshigee.playerchanger.logic.game;
 
-import com.minshigee.playerchanger.util.ConsoleLogs;
+import com.minshigee.playerchanger.util.MessageUtil;
 import com.minshigee.playerchanger.domain.GameState;
 import com.minshigee.playerchanger.domain.Role;
 import com.minshigee.playerchanger.domain.Participant;
@@ -8,12 +8,13 @@ import com.minshigee.playerchanger.domain.module.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.BlockVector;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public class GameData extends Data {
     private static void setGameStatus(GameState status){
         gameState = status;
     }
-    public static void offGameStatus(){
+    public static void offGameState(){
         setGameStatus(GameState.Disable);
     }
     public static void makeNextGameStatus(){
@@ -45,10 +46,14 @@ public class GameData extends Data {
     /*
         게임 참가자들을 관리하는 HashSet과 관련 메소드의 집합입니다.
     */
-    private static final HashSet<Participant> participants = new HashSet<>();
+    private static HashSet<Participant> participants = new HashSet<>();
+    public static List<BlockVector> spawnBlockVectors = Collections.synchronizedList(new ArrayList<>());
+    public static List<BlockVector> chestBlockVectors = Collections.synchronizedList(new ArrayList<>());
+    public static List<BlockVector> assignBlockVectors = Collections.synchronizedList(new ArrayList<>());
 
     public static Set<Participant> getParticipantsByRole(Role role){return participants.stream().filter(participant -> participant.getRole().equals(role)).collect(Collectors.toSet());}
-    public static void addPlayerToParticipants(Player player, Role role){boolean res = participants.add(new Participant(player, role));ConsoleLogs.printConsoleLog(ChatColor.GREEN + player.getName() + "님의 " + role.name() + "의 등록이 " + res + "로 처리됨.");}
+    public static void addPlayerToParticipants(Player player, Role role){boolean res = participants.add(new Participant(player, role));
+        MessageUtil.printConsoleLog(ChatColor.GREEN + player.getName() + "님의 " + role.name() + "의 등록이 " + res + "로 처리됨.");}
     public static void clearParticipants(){participants.clear();}
     public static void removePlayerFromParticipants(Player player){getParticipantByPlayer(player).ifPresent(participants::remove);}
     public static boolean containPlayerFromParticipants(Player player){return getParticipantByPlayer(player).isPresent();}

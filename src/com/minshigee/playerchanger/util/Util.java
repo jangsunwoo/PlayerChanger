@@ -19,7 +19,7 @@ public class Util {
                         return ((Controller)PlayerChanger.getInstanceOfClass(aClass)).getIsAvailable();
                     }
                     catch (Exception e){
-                        ConsoleLogs.printConsoleLog(ChatColor.RED + "Controller의 isAvailable 참조에 실패했습니다.");
+                        MessageUtil.printConsoleLog(ChatColor.RED + "Controller의 isAvailable 참조에 실패했습니다.");
                         return false;
                     }
                 }).collect(Collectors.toSet());

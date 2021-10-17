@@ -3,7 +3,7 @@ package com.minshigee.playerchanger.logic;
 import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.domain.annotation.MappingCommand;
 import com.minshigee.playerchanger.logic.game.GameData;
-import com.minshigee.playerchanger.util.ConsoleLogs;
+import com.minshigee.playerchanger.util.MessageUtil;
 import com.minshigee.playerchanger.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -20,7 +20,7 @@ public class CommandsExecutor implements CommandExecutor{
     private HashMap<String,Method> availableCommands = new HashMap<>();
 
     public CommandsExecutor(){
-        ConsoleLogs.printConsoleLog(ChatColor.DARK_AQUA + "커맨드 등록을 시작합니다.");
+        MessageUtil.printConsoleLog(ChatColor.DARK_AQUA + "커맨드 등록을 시작합니다.");
         validateCommand();
     }
 
@@ -31,10 +31,10 @@ public class CommandsExecutor implements CommandExecutor{
                     .forEach(method -> {
                         MappingCommand metaCommand = method.getDeclaredAnnotation(MappingCommand.class);
                         registerAvailableMethods(metaCommand.arg(), method);
-                        ConsoleLogs.printConsoleLog(ChatColor.GREEN + metaCommand.arg() + " 커맨드가 등록되었습니다.");
+                        MessageUtil.printConsoleLog(ChatColor.GREEN + metaCommand.arg() + " 커맨드가 등록되었습니다.");
                     });
         });
-        ConsoleLogs.printConsoleLog(ChatColor.DARK_AQUA + "커맨드 등록이 끝났습니다.");
+        MessageUtil.printConsoleLog(ChatColor.DARK_AQUA + "커맨드 등록이 끝났습니다.");
     }
 
     private void registerAvailableMethods(String arg, Method method){
@@ -52,14 +52,14 @@ public class CommandsExecutor implements CommandExecutor{
             method.invoke(PlayerChanger.getInstanceOfClass(method.getDeclaringClass()),sender,args);
         }
         catch (Exception e){
-            ConsoleLogs.printLogToPlayer(sender, ChatColor.RED + args[0] + " 명령을 실행하는데 실패했습니다.");
+            MessageUtil.printLogToPlayer(sender, ChatColor.RED + args[0] + " 명령을 실행하는데 실패했습니다.");
         }
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
         if(!(sender instanceof Player)){
-            ConsoleLogs.printConsoleLog(ChatColor.RED + "콘솔에서는 실행할 수 없는 명령어입니다.");
+            MessageUtil.printConsoleLog(ChatColor.RED + "콘솔에서는 실행할 수 없는 명령어입니다.");
             return true;
         }
         if(args.length < 1)

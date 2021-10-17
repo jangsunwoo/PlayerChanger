@@ -5,12 +5,9 @@ import com.minshigee.playerchanger.domain.GameState;
 import com.minshigee.playerchanger.domain.annotation.IsController;
 import com.minshigee.playerchanger.domain.annotation.MappingCommand;
 import com.minshigee.playerchanger.domain.annotation.MappingEvent;
-import com.minshigee.playerchanger.util.ConsoleLogs;
-import com.minshigee.playerchanger.domain.annotation.NeedOP;
 import com.minshigee.playerchanger.domain.module.Controller;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 @IsController
@@ -21,11 +18,11 @@ public class GameController extends Controller<GameRepositoy> {
 
     @MappingCommand(arg = "start", needOp = true, states = {GameState.Disable, GameState.Waitting})
     public void executeStart(Player player, String[] args){
-        repository.excuteGameStart();
+        repository.excuteGameStart(player);
     }
     @MappingCommand(arg = "stop", needOp = true, states = {GameState.Waitting, GameState.Enable, GameState.Freezing})
     public void executeStop(Player player, String[] args){
-
+        repository.executeGameStop(player);
     }
     @MappingCommand(arg = "setter", needOp = true, states = {GameState.Disable})
     public void executeSetter(Player player, String[] args){
@@ -42,6 +39,7 @@ public class GameController extends Controller<GameRepositoy> {
         repository.updateGameCoreBolck(event);
         PlayerChanger.singleton.saveConfig();
     }
+
 
     @MappingEvent(states = {GameState.Disable})
     public void hurtPlayer(EntityDamageEvent event){

@@ -3,18 +3,16 @@ package com.minshigee.playerchanger.logic;
 import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.domain.annotation.MappingEvent;
 import com.minshigee.playerchanger.logic.game.GameData;
-import com.minshigee.playerchanger.util.ConsoleLogs;
+import com.minshigee.playerchanger.util.MessageUtil;
 import com.minshigee.playerchanger.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +35,7 @@ public class EventsListener implements Listener {
     }
 
     public EventsListener(){
-        ConsoleLogs.printConsoleLog(ChatColor.DARK_AQUA + "이벤트 등록을 시작합니다.");
+        MessageUtil.printConsoleLog(ChatColor.DARK_AQUA + "이벤트 등록을 시작합니다.");
         validateAvailableMethods();
     }
 
@@ -51,13 +49,13 @@ public class EventsListener implements Listener {
                                 registerAvailableMethods(method.getParameters()[0].getType().getSimpleName(), method);
                             });
                 });
-        ConsoleLogs.printConsoleLog(ChatColor.DARK_AQUA + "이벤트 등록이 끝났습니다.");
+        MessageUtil.printConsoleLog(ChatColor.DARK_AQUA + "이벤트 등록이 끝났습니다.");
     }
 
     private void registerAvailableMethods(String typeName, Method method){
         avilableMethods.computeIfAbsent(typeName, k -> new HashSet<>());
         avilableMethods.get(typeName).add(method);
-        ConsoleLogs.printConsoleLog(ChatColor.GREEN + typeName + "의 " + method.getName() + "이 등록되었습니다.");
+        MessageUtil.printConsoleLog(ChatColor.GREEN + typeName + "의 " + method.getName() + "이 등록되었습니다.");
     }
 
     private <T> void executeEventMethod(String typeName, T event){
@@ -70,7 +68,7 @@ public class EventsListener implements Listener {
                     method.invoke(PlayerChanger.getInstanceOfClass(method.getDeclaringClass()), event);
                 }
                 catch (Exception e){
-                    ConsoleLogs.printConsoleLog(ChatColor.RED + method.getName() + " 의 실행을 실패했습니다.");
+                    MessageUtil.printConsoleLog(ChatColor.RED + method.getName() + " 의 실행을 실패했습니다.");
                 }
             }
         });
