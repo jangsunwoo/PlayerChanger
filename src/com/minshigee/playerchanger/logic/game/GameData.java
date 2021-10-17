@@ -59,6 +59,7 @@ public class GameData extends Data {
     public static boolean containPlayerFromParticipants(Player player){return getParticipantByPlayer(player).isPresent();}
     public static Optional<Participant> getParticipantByPlayer(Player player){return participants.stream().filter(participant -> participant.getPlayer().equals(player)).findAny();}
     public static Role getRoleByPlayer(Player player){Optional<Participant> participant = getParticipantByPlayer(player);if(participant.isEmpty())return null;return participant.get().getRole();}
+    public void clearWorldBlockSets(){spawnBlockVectors.clear();chestBlockVectors.clear();assignBlockVectors.clear();}
 
     /*
     게임 세팅모드를 관리하는 코드입니다.
