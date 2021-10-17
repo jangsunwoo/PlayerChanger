@@ -14,9 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockVector;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Set;
 
 public class GameRepositoy extends Repository<GameData> {
     public GameRepositoy(GameData localDB) {
@@ -39,57 +37,71 @@ public class GameRepositoy extends Repository<GameData> {
         MessageUtil.printMsgToPlayers(ChatMessageType.CHAT, ChatColor.AQUA + "월드 스캐닝을 시작합니다. 시간이 조금 걸립니다.");
         final Location pos1 = PlayerChanger.config.getLocation("GameWorld.Size_Pos1");
         final Location pos2 = PlayerChanger.config.getLocation("GameWorld.Size_Pos2");
-        final Material spawnBlock = Material.valueOf(PlayerChanger.config.getString("SpawnBlock"));
-        final Material assignBlock = Material.valueOf(PlayerChanger.config.getString("MissionAssignBlock"));
-        BlockVector stV =  new BlockVector(Math.min(pos1.getBlockX(), pos2.getBlockX()), Math.min(pos1.getBlockY(),pos2.getBlockY()), Math.min(pos1.getBlockZ(),pos2.getBlockZ()));
-        BlockVector edV = new BlockVector(Math.max(pos1.getBlockX(), pos2.getBlockX()), Math.max(pos1.getBlockY(),pos2.getBlockY()), Math.max(pos1.getBlockZ(),pos2.getBlockZ()));
+        final String spawnBlock = PlayerChanger.config.getString("SpawnBlock");
+        final String assignBlock = PlayerChanger.config.getString("MissionAssignBlock");
+        final BlockVector stV =  new BlockVector(Math.min(pos1.getBlockX(), pos2.getBlockX()), Math.min(pos1.getBlockY(),pos2.getBlockY()), Math.min(pos1.getBlockZ(),pos2.getBlockZ()));
+        final BlockVector edV = new BlockVector(Math.max(pos1.getBlockX(), pos2.getBlockX()), Math.max(pos1.getBlockY(),pos2.getBlockY()), Math.max(pos1.getBlockZ(),pos2.getBlockZ()));
         new BukkitRunnable(){
             @Override
             public void run() {
-                AtomicInteger processCount = new AtomicInteger(0);
-                int searchProcess =((int)(edV.getBlockX() - stV.getBlockX()) / 16) * ((int)(edV.getBlockZ() - stV.getBlockZ()) / 16);
-                AtomicInteger searchCount = new AtomicInteger(0);
-                ArrayList<Pair<Integer,Integer>> chunkPoses = new ArrayList<>();
-                MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, "유효한 청크를 조사 중입니다.".formatted((int)(((double)searchCount.get() / searchProcess) * 100)));
+                ArrayList<Pair<Integer,Integer>> chunkPoz = new ArrayList<>();
+                MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, "유효한 청크를 조사 중입니다.");
                 for(int x = stV.getBlockX(); x <= edV.getBlockX(); x+= 16) {
-                    for (int z = stV.getBlockZ(); z <= edV.getBlockZ(); z += 16) {
-                        chunkPoses.add(new Pair(x, z));
-                        searchCount.getAndIncrement();
-                    }
+                    for (int z = stV.getBlockZ(); z <= edV.getBlockZ(); z += 16)
+                        chunkPoz.add(new Pair(x, z));
                 }
-                int chunksSize = chunkPoses.size();
-                chunkPoses.stream().parallel().forEach(pair -> {
-                    getBlocksInChunk(pos1.getWorld().getChunkAt(pair.getFirst(),pair.getSecond()), spawnBlock, GameData.spawnBlockVectors, stV, edV);
-                    getBlocksInChunk(pos1.getWorld().getChunkAt(pair.getFirst(),pair.getSecond()), assignBlock, GameData.assignBlockVectors, stV, edV);
-                    getBlocksInChunk(pos1.getWorld().getChunkAt(pair.getFirst(),pair.getSecond()), Material.CHEST, GameData.chestBlockVectors, stV, edV);
-                    processCount.getAndIncrement();
-                    MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, ChatColor.DARK_AQUA +"월드 스캔 %d%% 진행 중".formatted((int)(((double)processCount.get() / chunksSize) * 100)));
-                });
+                MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, "청크를 조사 중입니다.");
+                Integer threadCount = Runtime.getRuntime().availableProcessors();
+                Integer scanSize = chunkPoz.size();
+                Integer scanCount = 0;
+
+                ArrayList<ChunkSnapshot> tmpChunks = new ArrayList<>();
+                for(Pair<Integer,Integer> chunkPos : chunkPoz){
+                    tmpChunks.add(pos1.getWorld().getChunkAt(chunkPos.getFirst(),chunkPos.getSecond()).getChunkSnapshot());
+                    if(tmpChunks.size() < threadCount)
+                        continue;
+                    MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, ChatColor.DARK_AQUA + "월드 스캔 %d/%d 진행 중".formatted(scanCount,scanSize));
+                    scanSomeChunks(tmpChunks, spawnBlock, assignBlock, new Pair<Integer,Integer>(stV.getBlockY(), stV.getBlockY()));
+                    tmpChunks.clear();
+                    scanCount += threadCount;
+                }
+                scanSomeChunks(tmpChunks, spawnBlock, assignBlock, new Pair<Integer,Integer>(stV.getBlockY(), stV.getBlockY()));
                 MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, ChatColor.GREEN +"월드 스캔이 끝났습니다.");
             }
-        }.runTask(PlayerChanger.singleton);
+        }.runTaskAsynchronously(PlayerChanger.singleton);
     }
 
-    private void getBlocksInChunk(final Chunk chunk, Material material, List<BlockVector> toList, BlockVector minV, BlockVector maxV){
+    private void scanSomeChunks(final ArrayList<ChunkSnapshot> chunks,final String spawnBlock,final String assignBlock,final Pair<Integer,Integer>yRange){
+        chunks.parallelStream().forEach(chunk -> {
+            getBlocksInChunk(chunk, spawnBlock, GameData.spawnBlockVectors, yRange);
+            getBlocksInChunk(chunk, assignBlock, GameData.assignBlockVectors, yRange);
+            getBlocksInChunk(chunk, Material.CHEST.name(), GameData.chestBlockVectors, yRange);
+        });
+    }
+
+    private void getBlocksInChunk(final ChunkSnapshot chunk, String materialName, final Set<BlockVector> toSet, final Pair<Integer,Integer> yRange){
         ArrayList<BlockVector> blocks = new ArrayList<>();
         final int minX = chunk.getX();
         final int maxX = chunk.getX() | 16;
-        final int minY = minV.getBlockY();
-        final int maxY = maxV.getBlockY();
+        final int minY = yRange.getFirst();
+        final int maxY = yRange.getSecond();
         final int minZ = chunk.getZ() << 4;
         final int maxZ = chunk.getZ() | 16;
+        final Material material = Material.valueOf(materialName);
+        if(!chunk.contains(Bukkit.createBlockData(material)))
+            return;
         for(int x = minX; x < maxX; x++)
             for(int y = minY; y < maxY; y++)
                 for(int z = minZ; z < maxZ; z++) {
                     try {
-                        if (chunk.getBlock(x, y, z).getType().equals(material))
+                        if (chunk.getBlockType(x, y, z).equals(material))
                             blocks.add(new BlockVector(x, y, x));
                     }
                     catch (Exception e){
-                        continue;
+
                     }
                 }
-        toList.addAll(blocks);
+        toSet.addAll(blocks);
         return;
     }
 

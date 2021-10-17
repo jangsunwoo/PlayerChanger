@@ -47,9 +47,9 @@ public class GameData extends Data {
         게임 참가자들을 관리하는 HashSet과 관련 메소드의 집합입니다.
     */
     private static HashSet<Participant> participants = new HashSet<>();
-    public static List<BlockVector> spawnBlockVectors = Collections.synchronizedList(new ArrayList<>());
-    public static List<BlockVector> chestBlockVectors = Collections.synchronizedList(new ArrayList<>());
-    public static List<BlockVector> assignBlockVectors = Collections.synchronizedList(new ArrayList<>());
+    public static Set<BlockVector> spawnBlockVectors = Collections.synchronizedSet(new HashSet<>());
+    public static Set<BlockVector> chestBlockVectors = Collections.synchronizedSet(new HashSet<>());
+    public static Set<BlockVector> assignBlockVectors = Collections.synchronizedSet(new HashSet<>());
 
     public static Set<Participant> getParticipantsByRole(Role role){return participants.stream().filter(participant -> participant.getRole().equals(role)).collect(Collectors.toSet());}
     public static void addPlayerToParticipants(Player player, Role role){boolean res = participants.add(new Participant(player, role));
