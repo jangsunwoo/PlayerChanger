@@ -7,4 +7,11 @@ public class MissionRepository extends Repository<MissionData> {
         super(localDB);
     }
 
+    public void createMission(){
+
+    }
+
+    private void resetMission(){
+
+    }
 }

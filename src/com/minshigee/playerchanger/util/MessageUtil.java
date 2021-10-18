@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import java.awt.*;
 
 public class MessageUtil {
-    private static final String prefix = ChatColor.BLUE + "[ChangedChaser]:";
+    private static final String prefix = ChatColor.BLUE + "[Player Chaser]: ";
 
     public static void printMsgToAll(ChatMessageType type, String msg){
         printConsoleLog(msg);

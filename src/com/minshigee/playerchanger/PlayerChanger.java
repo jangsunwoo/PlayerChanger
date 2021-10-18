@@ -1,5 +1,8 @@
 package com.minshigee.playerchanger;
 
+import com.minshigee.playerchanger.logic.view.ViewController;
+import com.minshigee.playerchanger.logic.view.ViewData;
+import com.minshigee.playerchanger.logic.view.ViewRepository;
 import com.minshigee.playerchanger.util.MessageUtil;
 import com.minshigee.playerchanger.logic.CommandsExecutor;
 import com.minshigee.playerchanger.logic.EventsListener;
@@ -15,6 +18,7 @@ import com.minshigee.playerchanger.logic.game.GameRepositoy;
 import com.minshigee.playerchanger.logic.mission.MissionController;
 import com.minshigee.playerchanger.logic.mission.MissionData;
 import com.minshigee.playerchanger.logic.mission.MissionRepository;
+import org.apache.logging.log4j.core.config.AppenderRef;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -66,6 +70,7 @@ public class PlayerChanger extends JavaPlugin {
         injectDependency(MissionController.class, MissionRepository.class, MissionData.class);
         injectDependency(AbilitiesController.class, AbilitiesRepository.class, AbilitiesData.class);
         injectDependency(ChangeController.class, ChangeRepository.class, ChangeData.class);
+        injectDependency(ViewController.class, ViewRepository.class, ViewData.class);
     }
 
     private <T,K,S> void injectDependency(T conClass, K repoClass, S dbClass){

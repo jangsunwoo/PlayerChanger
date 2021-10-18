@@ -17,7 +17,7 @@ public class MissionController extends Controller<MissionRepository> {
     }
 
     @MappingCommand(arg = "start", needOp = true, states = {GameState.Waitting})
-    public void MissionSetStart(Player player, String[] args){
+    public void startMission(Player player, String[] args){
 
     }
 

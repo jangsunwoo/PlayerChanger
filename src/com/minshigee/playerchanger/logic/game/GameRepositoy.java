@@ -3,6 +3,8 @@ package com.minshigee.playerchanger.logic.game;
 import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.domain.GameState;
 import com.minshigee.playerchanger.domain.module.Repository;
+import com.minshigee.playerchanger.logic.view.ViewController;
+import com.minshigee.playerchanger.logic.view.domain.ShowType;
 import com.minshigee.playerchanger.util.MessageUtil;
 import com.mojang.datafixers.util.Pair;
 import net.md_5.bungee.api.ChatMessageType;
