@@ -1,8 +1,13 @@
 package com.minshigee.playerchanger.logic.mission;
 
 import com.minshigee.playerchanger.PlayerChanger;
+import com.minshigee.playerchanger.domain.GameState;
 import com.minshigee.playerchanger.domain.annotation.IsController;
+import com.minshigee.playerchanger.domain.annotation.MappingCommand;
+import com.minshigee.playerchanger.domain.annotation.MappingEvent;
 import com.minshigee.playerchanger.domain.module.Controller;
+import com.minshigee.playerchanger.util.MessageUtil;
+import org.bukkit.entity.Player;
 
 @IsController
 public class MissionController extends Controller<MissionRepository> {
@@ -11,6 +16,10 @@ public class MissionController extends Controller<MissionRepository> {
         isAvailable = PlayerChanger.config.getBoolean("UsingMission");
     }
 
+    @MappingCommand(arg = "start", needOp = true, states = {GameState.Waitting})
+    public void MissionSetStart(Player player, String[] args){
+
+    }
 
 
 }

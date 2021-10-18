@@ -63,9 +63,9 @@ public class PlayerChanger extends JavaPlugin {
 
     private void registerModules(){
         injectDependency(GameController.class, GameRepositoy.class, GameData.class);
+        injectDependency(MissionController.class, MissionRepository.class, MissionData.class);
         injectDependency(AbilitiesController.class, AbilitiesRepository.class, AbilitiesData.class);
         injectDependency(ChangeController.class, ChangeRepository.class, ChangeData.class);
-        injectDependency(MissionController.class, MissionRepository.class, MissionData.class);
     }
 
     private <T,K,S> void injectDependency(T conClass, K repoClass, S dbClass){

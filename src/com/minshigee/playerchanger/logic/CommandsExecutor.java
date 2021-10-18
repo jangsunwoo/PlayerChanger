@@ -12,12 +12,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class CommandsExecutor implements CommandExecutor{
 
-    private HashMap<String,Method> availableCommands = new HashMap<>();
+    private HashMap<String, ArrayList<Method>> availableCommands = new HashMap<>();
 
     public CommandsExecutor(){
         MessageUtil.printConsoleLog(ChatColor.DARK_AQUA + "커맨드 등록을 시작합니다.");
@@ -38,22 +39,27 @@ public class CommandsExecutor implements CommandExecutor{
     }
 
     private void registerAvailableMethods(String arg, Method method){
-        availableCommands.put(arg,method);
+        if(availableCommands.get(arg) == null){
+            availableCommands.put(arg,new ArrayList<>());
+        }
+        availableCommands.get(arg).add(method);
     }
 
     private void executeAvailableMethod(Player sender, String[] args){
-        Method method = availableCommands.get(args[0]);
-        MappingCommand metaCommand = method.getDeclaredAnnotation(MappingCommand.class);
-        if(metaCommand.needOp() && !sender.isOp())
-            return;
-        if(Arrays.stream(metaCommand.states()).noneMatch(gameState -> gameState.equals(GameData.getGameState())))
-            return;
-        try {
-            method.invoke(PlayerChanger.getInstanceOfClass(method.getDeclaringClass()),sender,args);
-        }
-        catch (Exception e){
-            MessageUtil.printLogToPlayer(sender, ChatColor.RED + args[0] + " 명령을 실행하는데 실패했습니다.");
-        }
+        ArrayList<Method> methods = availableCommands.get(args[0]);
+        methods.stream().forEach(method -> {
+            MappingCommand metaCommand = method.getDeclaredAnnotation(MappingCommand.class);
+            if(metaCommand.needOp() && !sender.isOp())
+                return;
+            if(Arrays.stream(metaCommand.states()).noneMatch(gameState -> gameState.equals(GameData.getGameState())))
+                return;
+            try {
+                method.invoke(PlayerChanger.getInstanceOfClass(method.getDeclaringClass()),sender,args);
+            }
+            catch (Exception e){
+                MessageUtil.printLogToPlayer(sender, ChatColor.RED + args[0] + " 명령을 실행하는데 실패했습니다.");
+            }
+        });
     }
 
     @Override
@@ -66,7 +72,6 @@ public class CommandsExecutor implements CommandExecutor{
             return true;
 
         executeAvailableMethod((Player)sender, args);
-
         return true;
     }
 }

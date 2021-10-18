@@ -6,7 +6,9 @@ import com.minshigee.playerchanger.domain.annotation.IsController;
 import com.minshigee.playerchanger.domain.annotation.MappingCommand;
 import com.minshigee.playerchanger.domain.annotation.MappingEvent;
 import com.minshigee.playerchanger.domain.module.Controller;
+import com.minshigee.playerchanger.util.MessageUtil;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -34,11 +36,10 @@ public class GameController extends Controller<GameRepositoy> {
 
     }
     @MappingEvent(states = {GameState.Disable})
-    public void updateGameWroldPos(PlayerInteractEvent event){
-        repository.updateGameWorldPos(event);
-        repository.updateGameCoreBolck(event);
-        PlayerChanger.singleton.saveConfig();
-    }
+    public void updateGameWroldPos(PlayerInteractEvent event){repository.updateGameWorldPos(event);repository.updateGameCoreBolck(event);PlayerChanger.singleton.saveConfig();}
+
+    @MappingEvent(states = {GameState.Disable})
+    public void playerBreakBlock(BlockBreakEvent event) {repository.breakBlockSetter(event);}
 
 
     @MappingEvent(states = {GameState.Disable})
