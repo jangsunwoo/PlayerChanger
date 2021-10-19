@@ -54,7 +54,7 @@ public class MissionRepository extends Repository<MissionData> {
         String name = player.getName();
         String description = ChatColor.STRIKETHROUGH + mission.getDescription();
         Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_AQUA + description + " 로 업데이트 되었습니다.");
-        ViewController.singleton.updateViewScoreboardString(this.viewCode, mission.getNum(), new Pair(ChatColor.RED + "Cleared : ", name));
+        ViewController.singleton.updateViewScoreboardString(this.viewCode, mission.getNum(), new Pair(ChatColor.RED + (ChatColor.ITALIC + "%d-Cleared : ").formatted(mission.getNum()), name));
     }
 
     private void registerScoreboard(){

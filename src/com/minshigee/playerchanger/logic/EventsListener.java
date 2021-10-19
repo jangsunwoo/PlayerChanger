@@ -33,6 +33,7 @@ public class EventsListener implements Listener {
             executeEventMethod(event.getEventName(),event);
         }
     }
+
     @EventHandler public void deathPlayer(PlayerDeathEvent event){executeEventMethod(event.getEventName(), event);}
     @EventHandler public void consumeItem(PlayerItemConsumeEvent event){executeEventMethod(event.getEventName(),event);}
     @EventHandler public void interactPlayer(PlayerInteractEvent event){executeEventMethod(event.getEventName(),event);}

@@ -95,12 +95,5 @@ public class GameData extends Data {
     private void initGameData(){
          setSettingItems();
     }
-    private void setSettingItems(){
-        ItemMeta meta = settingItems[0].getItemMeta();
-        meta.setDisplayName("게임 월드 범위 설정(좌_pos1/우_pos2)");
-        settingItems[0].setItemMeta(meta);
-        meta = settingItems[1].getItemMeta();
-        meta.setDisplayName("블럭 설정(좌_스폰 블럭/우_미션 반납 명령)");
-        settingItems[1].setItemMeta(meta);
-    }
+    private void setSettingItems(){ItemMeta meta = settingItems[0].getItemMeta();meta.setDisplayName("게임 월드 범위 설정(좌_pos1/우_pos2)");settingItems[0].setItemMeta(meta);meta = settingItems[1].getItemMeta();meta.setDisplayName("블럭 설정(좌_스폰 블럭/우_미션 반납 명령)");settingItems[1].setItemMeta(meta);}
 }
