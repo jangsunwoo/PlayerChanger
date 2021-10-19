@@ -5,18 +5,19 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
-public class Participant implements IParticipant {
+public class Participant implements IParticipant{
 
     private Player player;
     private Role role;
     private boolean death = false;
 
-    public Participant(Player _player){
+
+    public Participant(Player _player) {
         player = _player;
         role = Role.None;
     }
 
-    public Participant(Player _player, Role _role){
+    public Participant(Player _player, Role _role) {
         player = _player;
         role = _role;
     }
@@ -63,4 +64,6 @@ public class Participant implements IParticipant {
     public void swapIsDeath() {
         death = !death;
     }
+
+
 }

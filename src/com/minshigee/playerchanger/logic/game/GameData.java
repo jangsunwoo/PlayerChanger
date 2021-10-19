@@ -51,6 +51,8 @@ public class GameData extends Data {
     public static Set<BlockVector> chestBlockVectors = Collections.synchronizedSet(new HashSet<>());
     public static Set<BlockVector> assignBlockVectors = Collections.synchronizedSet(new HashSet<>());
 
+    public static HashSet<Participant> getParticipants() {return participants;}
+    public static Set<Participant> getParticipantsAlive() {return participants.stream().filter(participant -> participant.getRole().equals(Role.Participant)).filter(participant -> !participant.getIsDeath()).collect(Collectors.toSet());}
     public static Set<Participant> getParticipantsByRole(Role role){return participants.stream().filter(participant -> participant.getRole().equals(role)).collect(Collectors.toSet());}
     public static void addPlayerToParticipants(Player player, Role role){boolean res = participants.add(new Participant(player, role));
         MessageUtil.printConsoleLog(ChatColor.GREEN + player.getName() + "님의 " + role.name() + "의 등록이 " + res + "로 처리됨.");}

@@ -1,5 +1,6 @@
 package com.minshigee.playerchanger;
 
+import com.minshigee.playerchanger.domain.module.Controller;
 import com.minshigee.playerchanger.logic.view.ViewController;
 import com.minshigee.playerchanger.logic.view.ViewData;
 import com.minshigee.playerchanger.logic.view.ViewRepository;
@@ -78,6 +79,10 @@ public class PlayerChanger extends JavaPlugin {
             S tmpDB = (S) ((Class)dbClass).getConstructor().newInstance();
             K tmpRepo = (K) ((Class)repoClass).getConstructor(tmpDB.getClass()).newInstance(tmpDB);
             T tmpCont = (T) ((Class)conClass).getConstructor(tmpRepo.getClass()).newInstance(tmpRepo);
+            if(!(tmpCont instanceof Controller))
+                return;
+            if(!((Controller<?>) tmpCont).getIsAvailable())
+                return;
             registerInstanceToContainer(tmpDB);
             registerInstanceToContainer(tmpRepo);
             registerInstanceToContainer(tmpCont);

@@ -7,6 +7,7 @@ import com.minshigee.playerchanger.util.MessageUtil;
 import com.minshigee.playerchanger.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -21,6 +22,10 @@ import java.util.HashSet;
 public class EventsListener implements Listener {
     private HashMap<String,HashSet<Method>> avilableMethods = new HashMap<>();
 
+    @EventHandler
+    public void onEvent(Event event){
+        executeEventMethod("Event",event);
+    }
     @EventHandler
     public void damagedPlayer(EntityDamageEvent event){
         if(!(event.getEntity() instanceof Player))

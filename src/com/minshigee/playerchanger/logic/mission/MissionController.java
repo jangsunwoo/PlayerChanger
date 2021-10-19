@@ -6,8 +6,8 @@ import com.minshigee.playerchanger.domain.annotation.IsController;
 import com.minshigee.playerchanger.domain.annotation.MappingCommand;
 import com.minshigee.playerchanger.domain.annotation.MappingEvent;
 import com.minshigee.playerchanger.domain.module.Controller;
-import com.minshigee.playerchanger.util.MessageUtil;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 
 @IsController
 public class MissionController extends Controller<MissionRepository> {
@@ -18,8 +18,12 @@ public class MissionController extends Controller<MissionRepository> {
 
     @MappingCommand(arg = "start", needOp = true, states = {GameState.Waitting})
     public void startMission(Player player, String[] args){
-
+        repository.resetMissions();
     }
 
+    @MappingEvent(states = GameState.Enable)
+    public void onEvent(Event event){
+        repository.updateMissions(event);
+    }
 
 }

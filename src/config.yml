@@ -1,8 +1,6 @@
 UsingAbility: true
 UsingChanging: true
 UsingMission: true
-SpawnBlock: YELLOW_CONCRETE
-MissionAssignBlock: EMERALD_BLOCK
 GameWorld:
   Size_Pos1:
     ==: org.bukkit.Location
