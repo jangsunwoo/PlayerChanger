@@ -2,7 +2,10 @@ package com.minshigee.playerchanger.logic.game;
 
 import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.domain.GameState;
+import com.minshigee.playerchanger.domain.Role;
 import com.minshigee.playerchanger.domain.module.Repository;
+import com.minshigee.playerchanger.logic.mission.MissionController;
+import com.minshigee.playerchanger.logic.view.ViewController;
 import com.minshigee.playerchanger.util.MessageUtil;
 import com.mojang.datafixers.util.Pair;
 import net.md_5.bungee.api.ChatMessageType;
@@ -19,8 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class GameRepositoy extends Repository<GameData> {
-    public GameRepositoy(GameData localDB) {
-        super(localDB);
+    public GameRepositoy(GameData localDB, Integer viewCode) {
+        super(localDB,viewCode);
     }
 
     public void excuteGameStart(Player player){
@@ -29,12 +32,23 @@ public class GameRepositoy extends Repository<GameData> {
             GameData.makeNextGameStatus();
             scanGameWorldPos();
         }
+        else if(GameData.getGameState().equals(GameState.Waitting)){
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "GameState가 Enable로 바뀝니다.");
+            GameData.makeNextGameStatus();
+            //TODO 게임 시작...
+        }
     }
     private void validateBeforeGameStart(Player player){
         MessageUtil.printMsgToAll(ChatMessageType.CHAT, ChatColor.AQUA + "게임이 곧 시작됩니다. 관련 세팅을 시작합니다.");
         resetGame();
     }
 
+    /*
+    게임 참가와 관련된 코드
+     */
+    public void executeJoin(Player player){GameData.removePlayerFromParticipants(player);GameData.addPlayerToParticipants(player, Role.Participant);}
+    public void executeSpectator(Player player){GameData.removePlayerFromParticipants(player);GameData.addPlayerToParticipants(player,Role.Spectator);}
+    public void executeLeave(Player player){GameData.removePlayerFromParticipants(player); player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());}
     /*
     월드 스캔과 관련된 코드
      */
@@ -51,7 +65,8 @@ public class GameRepositoy extends Repository<GameData> {
     }
     private void resetGame(){
         localDB.clearSettingData();
-        GameData.clearParticipants();
+        ViewController.singleton.stopViewScoreboard();
+        /* 이 뒤는 participants 데이터를 제거합니다. 제일 마지막에 두도록 해주세요. */
         GameData.clearParticipants();
         GameData.offGameState();
     }

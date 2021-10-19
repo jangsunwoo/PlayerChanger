@@ -4,6 +4,7 @@ import com.minshigee.playerchanger.domain.Participant;
 import com.minshigee.playerchanger.domain.Role;
 import com.minshigee.playerchanger.logic.game.GameData;
 import com.minshigee.playerchanger.logic.mission.domain.interface_.IMission;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -15,7 +16,7 @@ public class Mission implements IMission {
     protected HashMap<Participant,Integer> participants = new HashMap<>();
     private Integer point;
     private Player clearPlayer = null;
-    protected String prefix = "";
+    protected String description = "";
 
     @Override
     public <T> Player updateMission(T event) {
@@ -24,10 +25,8 @@ public class Mission implements IMission {
 
     @Override
     public String getDescription() {
-        return null;
+        return description;
     }
-
-    protected String description = "";
 
     public Mission(int num) {
         Set<Participant> tmpParticipants = GameData.getParticipantsByRole(Role.Participant);

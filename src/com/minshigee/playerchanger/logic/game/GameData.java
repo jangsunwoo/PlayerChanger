@@ -1,5 +1,6 @@
 package com.minshigee.playerchanger.logic.game;
 
+import com.minshigee.playerchanger.logic.view.ViewRepository;
 import com.minshigee.playerchanger.util.MessageUtil;
 import com.minshigee.playerchanger.domain.GameState;
 import com.minshigee.playerchanger.domain.Role;
@@ -41,6 +42,7 @@ public class GameData extends Data {
             case Waitting, Freezing -> setGameStatus(GameState.Enable);
             case Enable -> setGameStatus(GameState.Freezing);
         }
+        ViewRepository.curTime = 0;
     }
 
     /*

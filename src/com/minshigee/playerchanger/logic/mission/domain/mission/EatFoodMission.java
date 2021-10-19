@@ -1,6 +1,7 @@
 package com.minshigee.playerchanger.logic.mission.domain.mission;
 
 import com.minshigee.playerchanger.logic.mission.domain.Mission;
+import com.minshigee.playerchanger.util.MessageUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -19,9 +20,8 @@ public class EatFoodMission extends Mission {
 
     public EatFoodMission(int num) {
         super(num);
-        this.prefix = "음식을 드세요 : ";
         this.eatMaterial = eatMaterials[random.nextInt(eatMaterials.length)];
-        this.description = eatMaterial.name();
+        this.description = "%s을 드세요.".formatted(eatMaterial.name().toLowerCase());
     }
 
     @Override

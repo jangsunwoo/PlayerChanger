@@ -25,21 +25,25 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
 public class PlayerChanger extends JavaPlugin {
 
     public static FileConfiguration config;
+    private static ArrayList<Class> ContainerSequenceList = new ArrayList<>();
     private static HashMap<Class, Object> Container = new HashMap<>();
     public static PlayerChanger singleton;
 
     public static Object getInstanceOfClass(Class cls){
         return Container.get(cls);
     }
-    public static Set<Class> getContainerKeys(){
-        return Container.keySet();
+    public static ArrayList<Class> getContainerKeys(){
+        return ContainerSequenceList;
     }
+
+    private Integer viewCode = 0;
 
     @Override
     public void onEnable() {
@@ -63,7 +67,7 @@ public class PlayerChanger extends JavaPlugin {
         registerModules();
         registerCommandExecutor();
         registerEventListener();
-        //logDIResult();
+        logDIResult();
     }
 
     private void registerModules(){
@@ -77,12 +81,13 @@ public class PlayerChanger extends JavaPlugin {
     private <T,K,S> void injectDependency(T conClass, K repoClass, S dbClass){
         try {
             S tmpDB = (S) ((Class)dbClass).getConstructor().newInstance();
-            K tmpRepo = (K) ((Class)repoClass).getConstructor(tmpDB.getClass()).newInstance(tmpDB);
+            K tmpRepo = (K) ((Class)repoClass).getConstructor(tmpDB.getClass(), Integer.class).newInstance(tmpDB, viewCode++);
             T tmpCont = (T) ((Class)conClass).getConstructor(tmpRepo.getClass()).newInstance(tmpRepo);
             if(!(tmpCont instanceof Controller))
                 return;
             if(!((Controller<?>) tmpCont).getIsAvailable())
                 return;
+            ContainerSequenceList.add(tmpCont.getClass());
             registerInstanceToContainer(tmpDB);
             registerInstanceToContainer(tmpRepo);
             registerInstanceToContainer(tmpCont);
@@ -114,8 +119,8 @@ public class PlayerChanger extends JavaPlugin {
     }
 
     private void logDIResult(){
-        Container.keySet().forEach(o -> MessageUtil.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getName()));
-        Container.values().forEach(o -> MessageUtil.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getClass().getName()));
+        ContainerSequenceList.forEach(o -> MessageUtil.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getName()));
+        //Container.values().forEach(o -> MessageUtil.printConsoleLog(ChatColor.AQUA + "DI Cheker: " + o.getClass().getName()));
     }
 
 }

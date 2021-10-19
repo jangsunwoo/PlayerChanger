@@ -12,7 +12,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -23,10 +25,6 @@ public class EventsListener implements Listener {
     private HashMap<String,HashSet<Method>> avilableMethods = new HashMap<>();
 
     @EventHandler
-    public void onEvent(Event event){
-        executeEventMethod("Event",event);
-    }
-    @EventHandler
     public void damagedPlayer(EntityDamageEvent event){
         if(!(event.getEntity() instanceof Player))
             return;
@@ -35,8 +33,10 @@ public class EventsListener implements Listener {
             executeEventMethod(event.getEventName(),event);
         }
     }
+    @EventHandler public void deathPlayer(PlayerDeathEvent event){executeEventMethod(event.getEventName(), event);}
+    @EventHandler public void consumeItem(PlayerItemConsumeEvent event){executeEventMethod(event.getEventName(),event);}
     @EventHandler public void interactPlayer(PlayerInteractEvent event){executeEventMethod(event.getEventName(),event);}
-    @EventHandler void breakBlockPlayer(BlockBreakEvent event){executeEventMethod(event.getEventName(),event);}
+    @EventHandler public void breakBlockPlayer(BlockBreakEvent event){executeEventMethod(event.getEventName(),event);}
 
     public EventsListener(){
         MessageUtil.printConsoleLog(ChatColor.DARK_AQUA + "이벤트 등록을 시작합니다.");

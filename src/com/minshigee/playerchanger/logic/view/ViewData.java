@@ -3,10 +3,14 @@ package com.minshigee.playerchanger.logic.view;
 import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.logic.view.domain.ViewTask;
 import com.mojang.datafixers.util.Pair;
+import org.bukkit.Bukkit;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.util.*;
 
 public class ViewData {
+    public ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
     private Queue<ViewTask> viewTaskQueue = new PriorityQueue<>();
 
     public ViewTask getAndPopTask(){return viewTaskQueue.poll();}
@@ -30,9 +34,7 @@ public class ViewData {
     public ArrayList<Pair<String,String>> getNumOfScoreboard(int num){
         return scoreboardTemplate.get(num);
     }
-    public void updateScoreboardData(int num, int code, Pair<String,String> data){
-        scoreboardTemplate.get(num).set(code,data);
-    }
+    public void updateScoreboardData(int num, int code, Pair<String,String> data){scoreboardTemplate.get(num).set(code,data);}
     public void clearNumOfScoreboard(int num){
         scoreboardTemplate.get(num).clear();
     }

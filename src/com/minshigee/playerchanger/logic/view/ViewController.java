@@ -24,9 +24,9 @@ public class ViewController extends Controller<ViewRepository> {
         return;
     }
 
-    public void addViewScoreboardString(int num, Pair<String,String> data){
-
-    }
-
+    public void stopViewScoreboard(){repository.stopScoreboardData();}
+    public void clearViewScoreboard(int num){repository.clearScoreboardData(num);}
+    public void addViewScoreboardString(int num, Pair<String,String> data) {repository.addScoreboardData(num,data);}
+    public void updateViewScoreboardString(int num, int code, Pair<String,String> data){repository.updateScoreboardData(num,code,data);}
 
 }

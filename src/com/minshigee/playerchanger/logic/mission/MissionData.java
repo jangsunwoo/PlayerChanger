@@ -14,8 +14,11 @@ public class MissionData extends Data {
 
     public void resetMissions(){
         this.missions = MissionFactory.createMissions(
-                GameData.getParticipantsAlive().size()/2
+                GameData.getParticipantsAlive().size()
         );
+    }
+    public void clearMissions(){
+        this.missions.clear();
     }
 
     public ArrayList<? extends Mission> getMissions(){

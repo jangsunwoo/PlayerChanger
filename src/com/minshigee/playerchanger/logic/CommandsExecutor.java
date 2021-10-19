@@ -32,7 +32,7 @@ public class CommandsExecutor implements CommandExecutor{
                     .forEach(method -> {
                         MappingCommand metaCommand = method.getDeclaredAnnotation(MappingCommand.class);
                         registerAvailableMethods(metaCommand.arg(), method);
-                        MessageUtil.printConsoleLog(ChatColor.GREEN + metaCommand.arg() + " 커맨드가 등록되었습니다.");
+                        MessageUtil.printConsoleLog(ChatColor.GREEN + method.getDeclaringClass().getName() + "의 " + metaCommand.arg() + " 커맨드가 등록되었습니다.");
                     });
         });
         MessageUtil.printConsoleLog(ChatColor.DARK_AQUA + "커맨드 등록이 끝났습니다.");

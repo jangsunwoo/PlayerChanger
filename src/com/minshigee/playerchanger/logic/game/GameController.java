@@ -30,7 +30,12 @@ public class GameController extends Controller<GameRepositoy> {
     public void executeSetter(Player player, String[] args){
         repository.makePlayerSetterOrNot(player);
     }
-
+    @MappingCommand(arg = "join", needOp = false, states = {GameState.Waitting})
+    public void executeJoin(Player player, String[] args){repository.executeJoin(player);}
+    @MappingCommand(arg = "spectator", needOp = false, states = {GameState.Waitting})
+    public void executeSpectator(Player player, String[] args){repository.executeSpectator(player);}
+    @MappingCommand(arg = "leave", needOp = false, states = {GameState.Waitting})
+    public void executeLeave(Player player, String[] args){repository.executeLeave(player);}
     @MappingCommand(arg = "help", needOp = false, states = {GameState.Disable})
     public void executeHelp(Player player, String[] args){
 
