@@ -17,7 +17,6 @@ public class Util {
                 })
                 .filter(aClass -> {
                     try {
-                        MessageUtil.printConsoleLog(ChatColor.RED + PlayerChanger.getInstanceOfClass(aClass).getClass().getName());
                         return ((Controller)PlayerChanger.getInstanceOfClass(aClass)).getIsAvailable();
                     }
                     catch (Exception e){

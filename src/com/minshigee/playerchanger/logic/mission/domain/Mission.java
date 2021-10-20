@@ -28,6 +28,15 @@ public class Mission implements IMission {
         return description;
     }
 
+    @Override
+    public void generateItem() {
+
+    }
+    @Override
+    public void changeBlocks() {
+
+    }
+
     public Mission(int num) {
         Set<Participant> tmpParticipants = GameData.getParticipantsByRole(Role.Participant);
         for (Participant participant : tmpParticipants){

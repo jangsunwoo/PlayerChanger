@@ -5,6 +5,7 @@ import com.minshigee.playerchanger.domain.GameState;
 import com.minshigee.playerchanger.domain.Participant;
 import com.minshigee.playerchanger.domain.Role;
 import com.minshigee.playerchanger.domain.module.Repository;
+import com.minshigee.playerchanger.util.ItemGenerate;
 import com.minshigee.playerchanger.logic.view.ViewController;
 import com.minshigee.playerchanger.util.MessageUtil;
 import com.mojang.datafixers.util.Pair;
@@ -32,15 +33,17 @@ public class GameRepositoy extends Repository<GameData> {
             MessageUtil.printMsgToAll(ChatMessageType.CHAT, ChatColor.AQUA + "게임이 곧 시작됩니다. 관련 세팅을 시작합니다.");
             resetGame();
             GameData.makeNextGameStatus();
+            ///////뒤는 대기 상태에서의 추가 코드입니다.//////
             printWaitMessage();
             scanGameWorldPos();
         }
         else if(GameData.getGameState().equals(GameState.Waitting)){
-            if(GameData.spawnBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size() && GameData.furnaceBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size()/2 && GameData.chestBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size() && GameData.craftingBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size()/2){MessageUtil.printLogToPlayer(player, ChatColor.RED + "월드에 상자,조합대.화로의 갯수가 부족합니다.");return;}
-            if(GameData.getParticipants().size() < 2){MessageUtil.printLogToPlayer(player, ChatColor.RED + "최소 참가자 2명부터 시작이 가능합니다.");return;}
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "GameState가 Enable로 바뀝니다.");
-            teleportParticipantsToSpawnpoint();
-            GameData.makeNextGameStatus();
+            if(GameData.spawnBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size() || GameData.furnaceBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size()/2 || GameData.chestBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size() || GameData.craftingBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size()/2){MessageUtil.printLogToPlayer(player, ChatColor.RED + "월드에 상자,조합대.화로의 갯수가 부족합니다.");return;}
+            if(GameData.getParticipants().size() < 1){MessageUtil.printLogToPlayer(player, ChatColor.RED + "최소 참가자 2명부터 시작이 가능합니다.");return;}
+            ItemGenerate.addChangedItems(viewCode, localDB.returnDefaultInBoxItems()); // 월드 상자에 기본 아이템 지급 정보 제공
+            ItemGenerate.insertItemToChest(viewCode); // 월드 상자에 기본 아이템 공급
+            teleportParticipantsToSpawnpoint(); // 유저들을 spawn 좌표로 랜덤 소환.
+            GameData.makeNextGameStatus(); // 게임 State를 Enable로 전환
             //TODO 게임 시작...
         }
     }
@@ -57,8 +60,7 @@ public class GameRepositoy extends Repository<GameData> {
     월드 스캔과 관련된 코드
      */
     private void resetWorldScanData() {GameData.clearWorldBlockSets();}
-
-    private void scanGameWorldPos() {resetWorldScanData();MessageUtil.printMsgToPlayers(ChatMessageType.CHAT, ChatColor.AQUA + "월드 스캐닝을 시작합니다. 시간이 조금 걸립니다.");final Location pos1 = PlayerChanger.config.getLocation("GameWorld.Size_Pos1");final Location pos2 = PlayerChanger.config.getLocation("GameWorld.Size_Pos2");final String spawnBlock = Material.BEDROCK.name();final String assignBlock = Material.LECTERN.name();final BlockVector stV = new BlockVector(Math.min(pos1.getBlockX(), pos2.getBlockX()), Math.min(pos1.getBlockY(), pos2.getBlockY()), Math.min(pos1.getBlockZ(), pos2.getBlockZ()));final BlockVector edV = new BlockVector(Math.max(pos1.getBlockX(), pos2.getBlockX()), Math.max(pos1.getBlockY(), pos2.getBlockY()), Math.max(pos1.getBlockZ(), pos2.getBlockZ()));new BukkitRunnable() {@Override public void run() {ArrayList<Pair<Integer, Integer>> chunkPoz = new ArrayList<>();MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, "유효한 청크를 조사 중입니다.");for (int x = stV.getBlockX(); x <= edV.getBlockX(); x += 16) for (int z = stV.getBlockZ(); z <= edV.getBlockZ(); z += 16) chunkPoz.add(new Pair(x >> 4, z >> 4));MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, "청크를 조사 중입니다.");final Pair<Integer, Integer> rRange = new Pair<>(stV.getBlockY(), edV.getBlockY());Integer threadCount = Runtime.getRuntime().availableProcessors();Integer scanSize = chunkPoz.size();Integer scanCount = 0;Chunk chunk = null;ArrayList<ChunkSnapshot> tmpChunks = new ArrayList<>();for (Pair<Integer, Integer> chunkPos : chunkPoz) {if (!GameData.getGameState().equals(GameState.Waitting)) {MessageUtil.printConsoleLog(ChatColor.RED + "맵 스캔이 종료되었습니다.");break;}chunk = pos1.getWorld().getChunkAt(chunkPos.getFirst(), chunkPos.getSecond());tmpChunks.add(chunk.getChunkSnapshot());if (tmpChunks.size() < threadCount) continue;MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, ChatColor.DARK_AQUA + "월드 스캔 %d/%d 진행 중".formatted(scanCount, scanSize));scanSomeChunks(tmpChunks, rRange);tmpChunks.clear();scanCount += threadCount;}scanSomeChunks(tmpChunks, rRange);MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, ChatColor.GREEN + "월드 스캔이 끝났습니다.");MessageUtil.printConsoleLog(ChatColor.GREEN + "%s : [%d], %s : [%d], %s : [%d]".formatted("Chest", (long) GameData.chestBlockVectors.size(), spawnBlock, (long) GameData.spawnBlockVectors.size(), assignBlock, (long) GameData.furnaceBlockVectors.size()));this.cancel();}}.runTaskAsynchronously(PlayerChanger.singleton);}
+    private void scanGameWorldPos() {resetWorldScanData();MessageUtil.printMsgToPlayers(ChatMessageType.CHAT, ChatColor.AQUA + "월드 스캐닝을 시작합니다. 시간이 조금 걸립니다.");final Location pos1 = PlayerChanger.config.getLocation("GameWorld.Size_Pos1");final Location pos2 = PlayerChanger.config.getLocation("GameWorld.Size_Pos2");final BlockVector stV = new BlockVector(Math.min(pos1.getBlockX(), pos2.getBlockX()), Math.min(pos1.getBlockY(), pos2.getBlockY()), Math.min(pos1.getBlockZ(), pos2.getBlockZ()));final BlockVector edV = new BlockVector(Math.max(pos1.getBlockX(), pos2.getBlockX()), Math.max(pos1.getBlockY(), pos2.getBlockY()), Math.max(pos1.getBlockZ(), pos2.getBlockZ()));new BukkitRunnable() {@Override public void run() {ArrayList<Pair<Integer, Integer>> chunkPoz = new ArrayList<>();MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, "유효한 청크를 조사 중입니다.");for (int x = stV.getBlockX(); x <= edV.getBlockX(); x += 16) for (int z = stV.getBlockZ(); z <= edV.getBlockZ(); z += 16) chunkPoz.add(new Pair(x >> 4, z >> 4));MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, "청크를 조사 중입니다.");final Pair<Integer, Integer> rRange = new Pair<>(stV.getBlockY(), edV.getBlockY());Integer threadCount = Runtime.getRuntime().availableProcessors();Integer scanSize = chunkPoz.size();Integer scanCount = 0;Chunk chunk = null;ArrayList<ChunkSnapshot> tmpChunks = new ArrayList<>();for (Pair<Integer, Integer> chunkPos : chunkPoz) {if (!GameData.getGameState().equals(GameState.Waitting)) {MessageUtil.printConsoleLog(ChatColor.RED + "맵 스캔이 종료되었습니다.");break;}chunk = pos1.getWorld().getChunkAt(chunkPos.getFirst(), chunkPos.getSecond());tmpChunks.add(chunk.getChunkSnapshot());if (tmpChunks.size() < threadCount) continue;MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, ChatColor.DARK_AQUA + "월드 스캔 %d/%d 진행 중".formatted(scanCount, scanSize));scanSomeChunks(tmpChunks, rRange);tmpChunks.clear();scanCount += threadCount;}scanSomeChunks(tmpChunks, rRange);MessageUtil.printMsgToAll(ChatMessageType.ACTION_BAR, ChatColor.GREEN + "월드 스캔이 끝났습니다.");MessageUtil.printConsoleLog(ChatColor.GREEN + "%s : [%d], %s : [%d], %s : [%d]".formatted("Chest", (long) GameData.chestBlockVectors.size(), Material.BEDROCK.name(), (long) GameData.spawnBlockVectors.size(), Material.FURNACE.name(), (long) GameData.furnaceBlockVectors.size()));this.cancel();}}.runTaskAsynchronously(PlayerChanger.singleton);}
     private void scanSomeChunks(final ArrayList<ChunkSnapshot> chunks, final Pair<Integer, Integer> yRange) {chunks.parallelStream().forEach(chunk -> getBlocksInChunk(chunk, yRange));}
     private void getBlocksInChunk(final ChunkSnapshot chunk, final Pair<Integer, Integer> yRange) {Set<BlockVector> spawnBlocks = new HashSet<>();Set<BlockVector> craftingBlocks = new HashSet<>();Set<BlockVector> furnaceBlocks = new HashSet<>();Set<BlockVector> chestBlocks = new HashSet<>();final int minX = chunk.getX() << 4;final int maxX = minX | 15;final int minY = yRange.getFirst();final int maxY = yRange.getSecond();final int minZ = chunk.getZ() << 4;final int maxZ = minZ | 15;for (int x = minX; x <= maxX; ++x) for (int y = minY; y <= maxY; ++y) for (int z = minZ; z <= maxZ; ++z) {if (Material.BEDROCK.name().equals(chunk.getBlockType(x & 0xF, y, z & 0xF).name())) spawnBlocks.add(new BlockVector(x, y, z));if (Material.CRAFTING_TABLE.name().equals(chunk.getBlockType(x & 0xF, y, z & 0xF).name())) craftingBlocks.add(new BlockVector(x, y, z));if (Material.FURNACE.name().equals(chunk.getBlockType(x & 0xF, y, z & 0xF).name())) furnaceBlocks.add(new BlockVector(x, y, z));if (Material.CHEST.name().equals(chunk.getBlockType(x & 0xF, y, z & 0xF).name())) chestBlocks.add(new BlockVector(x, y, z));}GameData.spawnBlockVectors.addAll(spawnBlocks);GameData.craftingBlockVectors.addAll(craftingBlocks);GameData.furnaceBlockVectors.addAll(furnaceBlocks);GameData.chestBlockVectors.addAll(chestBlocks);}
 
@@ -70,6 +72,10 @@ public class GameRepositoy extends Repository<GameData> {
         MessageUtil.printLogToPlayer(player, ChatColor.RED + " 게임이 종료되었습니다.");
     }
     private void resetGame(){
+        ItemGenerate.resetWorldBlock();
+        ItemGenerate.resetChestBlocks();
+        ItemGenerate.clearChangedItems();
+        //////위의 내용을 제일 먼저 처리해주세요.//////
         localDB.clearSettingData();
         GameData.clearWorldBlockSets();
         ViewController.singleton.stopViewScoreboard();

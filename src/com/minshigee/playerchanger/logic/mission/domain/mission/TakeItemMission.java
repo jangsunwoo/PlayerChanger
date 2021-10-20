@@ -40,7 +40,7 @@ public class TakeItemMission extends Mission {
     public TakeItemMission(int num) {
         super(num);
         initData();
-        this.description += "%s %d개를 독서대(상점)에 납품(좌클릭)하세요.".formatted(needItem.getFirst().name().toLowerCase(), needItem.getSecond());
+        this.description += "%s %d개를 상점에 납품하세요.".formatted(needItem.getFirst().name().toLowerCase(), needItem.getSecond());
     }
 
     @Override

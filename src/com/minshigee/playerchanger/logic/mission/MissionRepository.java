@@ -20,11 +20,17 @@ public class MissionRepository extends Repository<MissionData> {
     }
 
     public void resetMissions(){
-        ViewController.singleton.clearViewScoreboard(viewCode);
-        localDB.resetMissions();
+        reloadMissions();
         registerScoreboard();
         Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "미션을 세팅합니다.");
     }
+
+    private void reloadMissions(){
+        ViewController.singleton.clearViewScoreboard(viewCode);
+        localDB.resetMissions();
+        Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "미션을 리로딩합니다.");
+    }
+
     public void clearMissions(){
         localDB.clearMissions();
     }
@@ -56,11 +62,12 @@ public class MissionRepository extends Repository<MissionData> {
 
     private void clearAllMissionAndReset(){
         GameData.makeNextGameStatus();
+        reloadMissions();
         ViewController.singleton.playSoundAllParticipants(Sound.BLOCK_BELL_USE);
         new BukkitRunnable(){
             @Override
             public void run() {
-                resetMissions();
+                registerScoreboard();
             }
         }.runTaskLater(PlayerChanger.singleton, 100);
     }

@@ -11,12 +11,6 @@ public class Participant implements IParticipant{
     private Role role;
     private boolean death = false;
 
-
-    public Participant(Player _player) {
-        player = _player;
-        role = Role.None;
-    }
-
     public Participant(Player _player, Role _role) {
         player = _player;
         role = _role;

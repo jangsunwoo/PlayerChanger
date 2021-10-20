@@ -6,8 +6,10 @@ import com.minshigee.playerchanger.domain.GameState;
 import com.minshigee.playerchanger.domain.Role;
 import com.minshigee.playerchanger.domain.Participant;
 import com.minshigee.playerchanger.domain.module.Data;
+import com.mojang.datafixers.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -95,4 +97,36 @@ public class GameData extends Data {
          setSettingItems();
     }
     private void setSettingItems(){ItemMeta meta = settingItem.getItemMeta();meta.setDisplayName("게임 월드 범위 설정(좌_pos1/우_pos2)");}
+
+    /*
+    기본적으로 생성되는 아이템 리스트와 비율입니다.
+     */
+    public ArrayList<Pair<Material, Integer>> returnDefaultInBoxItems(){
+        return new ArrayList<>(){{
+            add(new Pair<>(Material.WOODEN_SWORD, getPerParticipantsAlive(1)));
+            add(new Pair<>(Material.STONE_SWORD, getPerParticipantsAlive(0.7)));
+            add(new Pair<>(Material.STONE_PICKAXE, getPerParticipantsAlive(0.5)));
+            add(new Pair<>(Material.CHAINMAIL_BOOTS, getPerParticipantsAlive(1)));
+            add(new Pair<>(Material.CHAINMAIL_CHESTPLATE, getPerParticipantsAlive(1)));
+            add(new Pair<>(Material.CHAINMAIL_HELMET, getPerParticipantsAlive(1)));
+            add(new Pair<>(Material.CHAINMAIL_LEGGINGS, getPerParticipantsAlive(1)));
+            add(new Pair<>(Material.IRON_SWORD, getPerParticipantsAlive(0.5)));
+            add(new Pair<>(Material.IRON_BOOTS, getPerParticipantsAlive(0.1)));
+            add(new Pair<>(Material.IRON_CHESTPLATE, getPerParticipantsAlive(0.2)));
+            add(new Pair<>(Material.IRON_HELMET, getPerParticipantsAlive(0.1)));
+            add(new Pair<>(Material.IRON_LEGGINGS, getPerParticipantsAlive(0.1)));
+            add(new Pair<>(Material.GLASS, getPerParticipantsAlive(32)));
+            add(new Pair<>(Material.COBWEB, getPerParticipantsAlive(5)));
+            add(new Pair<>(Material.ENDER_PEARL, getPerParticipantsAlive(4)));
+            add(new Pair<>(Material.APPLE, getPerParticipantsAlive(1)));
+            add(new Pair<>(Material.GOLDEN_APPLE, getPerParticipantsAlive(0.4)));
+            add(new Pair<>(Material.COOKED_PORKCHOP, getPerParticipantsAlive(1)));
+            add(new Pair<>(Material.COOKED_BEEF, getPerParticipantsAlive(5)));
+        }};
+    }
+    private Integer getPerParticipantsAlive(double d){
+        return Math.max(1,(int)Math.round(getParticipantsAlive().size() * d));
+    }
+
+
 }

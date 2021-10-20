@@ -57,7 +57,7 @@ public class ViewRepository extends Repository<ViewData> {
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.getScore(ChatColor.DARK_GRAY + "==================").setScore(cnt--);
         objective.getScore( "게임 상태: " + ChatColor.GREEN + "%s".formatted(GameData.getGameState().name())).setScore(cnt--);
-        objective.getScore( "게임 타임: " + ChatColor.GREEN + "%dsec".formatted(curTime/10)).setScore(cnt--);
+        //objective.getScore( "게임 타임: " + ChatColor.GREEN + "%dsec".formatted(curTime/10)).setScore(cnt--);
         objective.getScore("유저 역할: " + ChatColor.GREEN + "%s".formatted(participant.getRole().name())).setScore(cnt--);
         objective.getScore(ChatColor.DARK_GRAY + "=================-").setScore(cnt--);
         for(int i = 0; i < 5; i++){
@@ -69,7 +69,7 @@ public class ViewRepository extends Repository<ViewData> {
             }
             objective.getScore(ChatColor.DARK_GRAY + "================%d".formatted(i)).setScore(cnt--);
         }
-        objective.getScore("남은 유저: %d명".formatted(GameData.getParticipantsAlive().size()));
+        objective.getScore("남은 유저: %d명".formatted(GameData.getParticipantsAlive().size())).setScore(cnt--);
         participant.getPlayer().setScoreboard(scoreboard);
     }
 
