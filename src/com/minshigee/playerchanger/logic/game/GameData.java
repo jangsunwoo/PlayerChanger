@@ -51,10 +51,12 @@ public class GameData extends Data {
     private static HashSet<Participant> participants = new HashSet<>();
     public static Set<BlockVector> spawnBlockVectors = Collections.synchronizedSet(new HashSet<>());
     public static Set<BlockVector> chestBlockVectors = Collections.synchronizedSet(new HashSet<>());
-    public static Set<BlockVector> assignBlockVectors = Collections.synchronizedSet(new HashSet<>());
+    public static Set<BlockVector> craftingBlockVectors = Collections.synchronizedSet(new HashSet<>());
+    public static Set<BlockVector> furnaceBlockVectors = Collections.synchronizedSet(new HashSet<>());
 
     public static HashSet<Participant> getParticipants() {return participants;}
     public static Set<Participant> getParticipantsAlive() {return participants.stream().filter(participant -> participant.getRole().equals(Role.Participant)).filter(participant -> !participant.getIsDeath()).collect(Collectors.toSet());}
+    public static Optional<Participant> getParticipantAlive(Player player){return getParticipantsAlive().stream().filter(participant -> participant.getPlayer().equals(player)).findFirst();}
     public static Set<Participant> getParticipantsByRole(Role role){return participants.stream().filter(participant -> participant.getRole().equals(role)).collect(Collectors.toSet());}
     public static void addPlayerToParticipants(Player player, Role role){boolean res = participants.add(new Participant(player, role));
         MessageUtil.printConsoleLog(ChatColor.GREEN + player.getName() + "님의 " + role.name() + "의 등록이 " + res + "로 처리됨.");}
@@ -63,7 +65,7 @@ public class GameData extends Data {
     public static boolean containPlayerFromParticipants(Player player){return getParticipantByPlayer(player).isPresent();}
     public static Optional<Participant> getParticipantByPlayer(Player player){return participants.stream().filter(participant -> participant.getPlayer().equals(player)).findAny();}
     public static Role getRoleByPlayer(Player player){Optional<Participant> participant = getParticipantByPlayer(player);if(participant.isEmpty())return null;return participant.get().getRole();}
-    public void clearWorldBlockSets(){spawnBlockVectors.clear();chestBlockVectors.clear();assignBlockVectors.clear();}
+    public static void clearWorldBlockSets(){spawnBlockVectors.clear();chestBlockVectors.clear();craftingBlockVectors.clear();furnaceBlockVectors.clear();}
 
     /*
     게임 세팅모드를 관리하는 코드입니다.
@@ -71,10 +73,7 @@ public class GameData extends Data {
     private HashSet<Player> setters = new HashSet<>();
     private HashMap<Player, ItemStack[]> tmpSaveInventory = new HashMap<>();
     private final Inventory emptyInventory = Bukkit.createInventory(null, InventoryType.PLAYER);
-    private ItemStack[] settingItems = {
-            new ItemStack(Material.BLAZE_ROD, 1),
-            new ItemStack(Material.ARROW, 1)
-    };
+    private ItemStack settingItem = new ItemStack(Material.BLAZE_ROD, 1);
     public boolean checkPlayerIsSetter(Player player){
         return setters.contains(player);
     }
@@ -84,7 +83,7 @@ public class GameData extends Data {
         player.getInventory().setContents(
             emptyInventory.getContents()
         );
-        player.getInventory().addItem(settingItems);
+        player.getInventory().addItem(settingItem);
     }
     public void removeSetter(Player player){setters.remove(player);player.getInventory().setContents(tmpSaveInventory.get(player));tmpSaveInventory.remove(player);}
     public void clearSettingData(){setters.forEach(this::removeSetter);setters.clear();tmpSaveInventory.clear();}
@@ -95,5 +94,5 @@ public class GameData extends Data {
     private void initGameData(){
          setSettingItems();
     }
-    private void setSettingItems(){ItemMeta meta = settingItems[0].getItemMeta();meta.setDisplayName("게임 월드 범위 설정(좌_pos1/우_pos2)");settingItems[0].setItemMeta(meta);meta = settingItems[1].getItemMeta();meta.setDisplayName("블럭 설정(좌_스폰 블럭/우_미션 반납 명령)");settingItems[1].setItemMeta(meta);}
+    private void setSettingItems(){ItemMeta meta = settingItem.getItemMeta();meta.setDisplayName("게임 월드 범위 설정(좌_pos1/우_pos2)");}
 }

@@ -21,7 +21,7 @@ public class EatFoodMission extends Mission {
     public EatFoodMission(int num) {
         super(num);
         this.eatMaterial = eatMaterials[random.nextInt(eatMaterials.length)];
-        this.description = "%s을 드세요.".formatted(eatMaterial.name().toLowerCase());
+        this.description += "%s을 드세요.".formatted(eatMaterial.name().toLowerCase());
     }
 
     @Override

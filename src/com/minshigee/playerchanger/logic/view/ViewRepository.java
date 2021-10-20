@@ -12,6 +12,7 @@ import com.minshigee.playerchanger.logic.view.domain.ViewTask;
 import com.mojang.datafixers.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -68,6 +69,13 @@ public class ViewRepository extends Repository<ViewData> {
             }
             objective.getScore(ChatColor.DARK_GRAY + "================%d".formatted(i)).setScore(cnt--);
         }
+        objective.getScore("남은 유저: %d명".formatted(GameData.getParticipantsAlive().size()));
         participant.getPlayer().setScoreboard(scoreboard);
+    }
+
+    public void playSoundAllParticipants(Sound sound){
+        GameData.getParticipants().stream().map(Participant::getPlayer).forEach(p -> {
+            p.playSound(p.getLocation(), sound,1,1);
+        });
     }
 }

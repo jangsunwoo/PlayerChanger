@@ -35,6 +35,7 @@ public class Mission implements IMission {
         }
         this.point = 1;
         this.num = num;
+        this.description = "%d) ".formatted(num);
     }
 
     protected void setPoint(int point){this.point = point;}

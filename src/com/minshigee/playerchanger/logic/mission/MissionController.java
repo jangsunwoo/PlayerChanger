@@ -13,6 +13,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 
@@ -41,6 +43,13 @@ public class MissionController extends Controller<MissionRepository> {
     public void breakBlockEvent(BlockBreakEvent event){
         repository.updateMissions(event);
     }
+    @MappingEvent(states = GameState.Enable)
+    public void interactPlayerEvnet(PlayerInteractEvent event){repository.updateMissions(event);}
+    @MappingEvent(states = GameState.Enable)
+    public void deathPlayer(PlayerDeathEvent event){
+        repository.updateMissions(event);
+    }
+
 
 
 }
