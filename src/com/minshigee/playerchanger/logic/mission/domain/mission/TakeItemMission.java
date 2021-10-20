@@ -35,6 +35,7 @@ public class TakeItemMission extends Mission {
             cnt = cnt + random.nextInt(cnt/2);
         needItem = new Pair<Material,Integer>(p.getFirst(),cnt);
         GameData.getParticipantsAlive().forEach(participant -> takeMap.put(participant,0));
+        registerItemMaterials.add(new Pair(needItem.getFirst(), (int)Math.round(needItem.getSecond() * 1.45D)));
     }
 
     public TakeItemMission(int num) {

@@ -5,11 +5,13 @@ import com.minshigee.playerchanger.domain.module.Repository;
 import com.minshigee.playerchanger.logic.game.GameData;
 import com.minshigee.playerchanger.logic.mission.domain.Mission;
 import com.minshigee.playerchanger.logic.view.ViewController;
+import com.minshigee.playerchanger.util.ItemGenerate;
 import com.mojang.datafixers.View;
 import com.mojang.datafixers.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -28,7 +30,19 @@ public class MissionRepository extends Repository<MissionData> {
     private void reloadMissions(){
         ViewController.singleton.clearViewScoreboard(viewCode);
         localDB.resetMissions();
+        registerMissionItemBlockDataToWorld();
         Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "미션을 리로딩합니다.");
+    }
+
+    private void registerMissionItemBlockDataToWorld(){
+        ItemGenerate.clearChangedCodeItems(viewCode);
+        ItemGenerate.clearChangedCodeBlocks(viewCode);
+        localDB.getMissions().forEach(mission -> {
+            ItemGenerate.addChangedBlocks(viewCode, mission.getRegisterBlockMaterials());
+            ItemGenerate.addChangedItems(viewCode, mission.getRegisterItemMaterials());
+        });
+        ItemGenerate.makeNecessaryBlock(viewCode);
+        ItemGenerate.insertItemToChest(viewCode);
     }
 
     public void clearMissions(){

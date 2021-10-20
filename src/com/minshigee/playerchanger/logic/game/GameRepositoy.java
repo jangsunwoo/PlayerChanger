@@ -40,13 +40,22 @@ public class GameRepositoy extends Repository<GameData> {
         else if(GameData.getGameState().equals(GameState.Waitting)){
             if(GameData.spawnBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size() || GameData.furnaceBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size()/2 || GameData.chestBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size() || GameData.craftingBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size()/2){MessageUtil.printLogToPlayer(player, ChatColor.RED + "월드에 상자,조합대.화로의 갯수가 부족합니다.");return;}
             if(GameData.getParticipants().size() < 1){MessageUtil.printLogToPlayer(player, ChatColor.RED + "최소 참가자 2명부터 시작이 가능합니다.");return;}
-            ItemGenerate.addChangedItems(viewCode, localDB.returnDefaultInBoxItems()); // 월드 상자에 기본 아이템 지급 정보 제공
-            ItemGenerate.insertItemToChest(viewCode); // 월드 상자에 기본 아이템 공급
-            teleportParticipantsToSpawnpoint(); // 유저들을 spawn 좌표로 랜덤 소환.
-            GameData.makeNextGameStatus(); // 게임 State를 Enable로 전환
-            //TODO 게임 시작...
+            executeEnable();
         }
     }
+
+    private void executeEnable(){
+        //TODO 게임 시작...
+        ItemGenerate.addChangedItems(viewCode, localDB.returnDefaultInBoxItems()); // 월드 상자에 기본 아이템 지급 정보 제공
+        ItemGenerate.insertItemToChest(viewCode); // 월드 상자에 기본 아이템 공급
+
+        ItemGenerate.addChangedBlocks(viewCode, localDB.returnDefaultNecessaryBlocks()); // 필요한 블럭 정보 제공
+        ItemGenerate.makeNecessaryBlock(viewCode); // 필요한 블럭을 월드에 추가
+
+        teleportParticipantsToSpawnpoint(); // 유저들을 spawn 좌표로 랜덤 소환.
+        GameData.makeNextGameStatus(); // 게임 State를 Enable로 전환
+    }
+
     private void teleportParticipantsToSpawnpoint(){ArrayList<Participant> tmpParticipants = new ArrayList<>(GameData.getParticipantsAlive());ArrayList<BlockVector> tmpSpawnpoints = new ArrayList<>(GameData.spawnBlockVectors);Collections.shuffle(tmpParticipants);Collections.shuffle(tmpSpawnpoints);for(int i = 0; i < tmpParticipants.size(); i++){Player player = tmpParticipants.get(i).getPlayer();BlockVector pos = tmpSpawnpoints.get(i);player.teleport(new Location(player.getWorld(), pos.getBlockX(),pos.getBlockY() + 1,pos.getBlockZ()));}}
 
     /*
@@ -74,7 +83,9 @@ public class GameRepositoy extends Repository<GameData> {
     private void resetGame(){
         ItemGenerate.resetWorldBlock();
         ItemGenerate.resetChestBlocks();
+
         ItemGenerate.clearChangedItems();
+        ItemGenerate.clearChangedBlocks();;
         //////위의 내용을 제일 먼저 처리해주세요.//////
         localDB.clearSettingData();
         GameData.clearWorldBlockSets();

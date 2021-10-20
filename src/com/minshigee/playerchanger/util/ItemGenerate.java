@@ -73,15 +73,21 @@ public class ItemGenerate {
         MessageUtil.printConsoleLog(ChatColor.GREEN + "%d 코드의 아이템 리스트를 창고에 배정했습니다.");
     }
 
-    private static void makeNecessaryBlock(){
+    public static void makeNecessaryBlock(Integer code){
         ArrayList<BlockVector> tmpVector = new ArrayList<>(){{
             addAll(GameData.craftingBlockVectors);
             addAll(GameData.furnaceBlockVectors);
         }};
-        Collections.shuffle(tmpVector);
-        int cnt = 1 + GameData.getParticipantsAlive().size()/playerPerShop;
-        for(int i = 0; i < cnt; i++)
-            setVectorBlock(tmpVector.get(i),Material.LECTERN);
+        ArrayList<BlockVector> validatedTmpVector = new ArrayList<>(tmpVector.stream().filter(vector -> {
+            Material mat =  world.getBlockAt(vector.getBlockX(),vector.getBlockY(), vector.getBlockZ()).getType();
+            return mat.equals(Material.CRAFTING_TABLE) || mat.equals(Material.FURNACE);
+        }).collect(Collectors.toList()));
+        Collections.shuffle(validatedTmpVector);
+
+        Integer cnt = changedBlocks.get(code).size();
+        for(int i = 0; i < cnt; i++){
+            validatedTmpVector.get(i).toLocation(world).getBlock().setType(changedBlocks.get(code).get(i));
+        }
     }
 
     private static void initSpecBlocks(Set<BlockVector> set, Material mat){

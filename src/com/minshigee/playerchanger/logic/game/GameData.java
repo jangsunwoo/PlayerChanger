@@ -99,6 +99,15 @@ public class GameData extends Data {
     private void setSettingItems(){ItemMeta meta = settingItem.getItemMeta();meta.setDisplayName("게임 월드 범위 설정(좌_pos1/우_pos2)");}
 
     /*
+    기본적으로 생성되는 블럭 리스트와 비율입니다.
+     */
+    public ArrayList<Material> returnDefaultNecessaryBlocks(){
+        return new ArrayList<>(){{
+           add(Material.LECTERN);
+        }};
+    }
+
+    /*
     기본적으로 생성되는 아이템 리스트와 비율입니다.
      */
     public ArrayList<Pair<Material, Integer>> returnDefaultInBoxItems(){

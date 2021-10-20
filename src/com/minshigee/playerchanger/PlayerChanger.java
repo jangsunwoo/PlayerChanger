@@ -71,11 +71,11 @@ public class PlayerChanger extends JavaPlugin {
     }
 
     private void registerModules(){
-        injectDependency(GameController.class, GameRepositoy.class, GameData.class);
-        injectDependency(MissionController.class, MissionRepository.class, MissionData.class);
-        injectDependency(AbilitiesController.class, AbilitiesRepository.class, AbilitiesData.class);
-        injectDependency(ChangeController.class, ChangeRepository.class, ChangeData.class);
-        injectDependency(ViewController.class, ViewRepository.class, ViewData.class);
+        injectDependency(GameController.class, GameRepositoy.class, GameData.class); //ViewCode = 0
+        injectDependency(MissionController.class, MissionRepository.class, MissionData.class); //ViewCode = 1
+        injectDependency(AbilitiesController.class, AbilitiesRepository.class, AbilitiesData.class); //ViewCode = 2
+        injectDependency(ChangeController.class, ChangeRepository.class, ChangeData.class); //ViewCode = 3
+        injectDependency(ViewController.class, ViewRepository.class, ViewData.class); //ViewCode = 4
     }
 
     private <T,K,S> void injectDependency(T conClass, K repoClass, S dbClass){

@@ -8,6 +8,4 @@ public interface IMission {
     public Integer getPoint();
     public Player getClearPlayer();
     public String getDescription();
-    public void generateItem();
-    public void changeBlocks();
 }
