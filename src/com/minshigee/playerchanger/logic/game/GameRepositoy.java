@@ -5,6 +5,7 @@ import com.minshigee.playerchanger.domain.GameState;
 import com.minshigee.playerchanger.domain.Participant;
 import com.minshigee.playerchanger.domain.Role;
 import com.minshigee.playerchanger.domain.module.Repository;
+import com.minshigee.playerchanger.logic.change.ChangeController;
 import com.minshigee.playerchanger.util.ItemGenerate;
 import com.minshigee.playerchanger.logic.view.ViewController;
 import com.minshigee.playerchanger.util.MessageUtil;
@@ -41,6 +42,14 @@ public class GameRepositoy extends Repository<GameData> {
             if(GameData.spawnBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size() || GameData.furnaceBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size()/2 || GameData.chestBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size() || GameData.craftingBlockVectors.size() < GameData.getParticipantsByRole(Role.Participant).size()/2){MessageUtil.printLogToPlayer(player, ChatColor.RED + "월드에 상자,조합대.화로의 갯수가 부족합니다.");return;}
             if(GameData.getParticipants().size() < 1){MessageUtil.printLogToPlayer(player, ChatColor.RED + "최소 참가자 2명부터 시작이 가능합니다.");return;}
             executeEnable();
+        }
+        else if(GameData.getGameState().equals(GameState.Enable)){
+            GameData.makeNextGameStatus();
+            ((ChangeController)PlayerChanger.getInstanceOfClass(ChangeController.class))
+                    .changePlayers(null, null);
+        }
+        else if(GameData.getGameState().equals(GameState.Freezing)){
+            GameData.makeNextGameStatus();
         }
     }
 

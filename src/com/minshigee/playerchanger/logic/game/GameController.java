@@ -46,7 +46,6 @@ public class GameController extends Controller<GameRepositoy> {
     @MappingEvent(states = {GameState.Disable})
     public void playerBreakBlock(BlockBreakEvent event) {repository.breakBlockSetter(event);}
 
-
     @MappingEvent(states = {GameState.Disable})
     public void hurtPlayer(EntityDamageEvent event){
 

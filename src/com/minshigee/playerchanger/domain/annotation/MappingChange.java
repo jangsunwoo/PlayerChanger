@@ -8,6 +8,5 @@ import java.lang.annotation.*;
         ElementType.METHOD
 })
 
-public @interface NeedOP {
-    boolean value() default true;
+public @interface MappingChange {
 }

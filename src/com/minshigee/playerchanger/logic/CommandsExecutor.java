@@ -47,7 +47,7 @@ public class CommandsExecutor implements CommandExecutor{
 
     private void executeAvailableMethod(Player sender, String[] args){
         ArrayList<Method> methods = availableCommands.get(args[0]);
-        methods.stream().forEach(method -> {
+        methods.forEach(method -> {
             MappingCommand metaCommand = method.getDeclaredAnnotation(MappingCommand.class);
             if(metaCommand.needOp() && !sender.isOp())
                 return;

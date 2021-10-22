@@ -2,6 +2,7 @@ package com.minshigee.playerchanger.logic.mission;
 
 import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.domain.module.Repository;
+import com.minshigee.playerchanger.logic.game.GameController;
 import com.minshigee.playerchanger.logic.game.GameData;
 import com.minshigee.playerchanger.logic.mission.domain.Mission;
 import com.minshigee.playerchanger.logic.view.ViewController;
@@ -65,7 +66,7 @@ public class MissionRepository extends Repository<MissionData> {
         }).findFirst();
     }
 
-    private void validateMission(){
+    private void validateMission(){ // 모든 미션이 Clear되었는지 홧인
         long mCnt = localDB.getMissions().stream().filter(mission -> {
             return mission.getClearPlayer() == null;
         }).count();
@@ -75,12 +76,13 @@ public class MissionRepository extends Repository<MissionData> {
     }
 
     private void clearAllMissionAndReset(){
-        GameData.makeNextGameStatus();
-        reloadMissions();
+        ((GameController)PlayerChanger.getInstanceOfClass(GameController.class))
+                .executeStart(null, null);
         ViewController.singleton.playSoundAllParticipants(Sound.BLOCK_BELL_USE);
         new BukkitRunnable(){
             @Override
             public void run() {
+                reloadMissions();
                 registerScoreboard();
             }
         }.runTaskLater(PlayerChanger.singleton, 100);
