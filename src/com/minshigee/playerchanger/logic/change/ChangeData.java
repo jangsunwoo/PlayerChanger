@@ -36,7 +36,7 @@ public class ChangeData extends Data {
             int code = pair.getFirst();
             Method method = pair.getSecond();
             try {
-                method.invoke(PlayerChanger.getInstanceOfClass(PlayerChanger.getContainerKeys().get(code)));
+                method.invoke(PlayerChanger.getInstanceOfClass(method.getDeclaringClass()));
             } catch (Exception e) {
                 MessageUtil.printConsoleLog("change에 실패했습니다.");
             }

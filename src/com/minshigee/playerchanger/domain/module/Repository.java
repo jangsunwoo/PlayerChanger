@@ -23,6 +23,7 @@ public class Repository<T> {
                     .forEach(method -> {
                         ((ChangeController)PlayerChanger.getInstanceOfClass(ChangeController.class))
                                 .registerChangeMethod(viewCode, method);
+                        MessageUtil.printConsoleLog("%d의 %s를 등록했습니다.".formatted(viewCode,method.getName()));
                     });
         }
         catch (Exception e){

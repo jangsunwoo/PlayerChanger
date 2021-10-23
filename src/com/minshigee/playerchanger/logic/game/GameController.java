@@ -20,7 +20,7 @@ public class GameController extends Controller<GameRepositoy> {
 
     @MappingCommand(arg = "start", needOp = true, states = {GameState.Disable, GameState.Waitting})
     public void executeStart(Player player, String[] args){
-        repository.excuteGameStart(player);
+        repository.excuteGameStart(player, args);
     }
     @MappingCommand(arg = "stop", needOp = true, states = {GameState.Waitting, GameState.Enable, GameState.Freezing})
     public void executeStop(Player player, String[] args){

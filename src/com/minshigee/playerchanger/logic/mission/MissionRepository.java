@@ -84,6 +84,8 @@ public class MissionRepository extends Repository<MissionData> {
             public void run() {
                 reloadMissions();
                 registerScoreboard();
+                ((GameController)PlayerChanger.getInstanceOfClass(GameController.class))
+                        .executeStart(null, null);
             }
         }.runTaskLater(PlayerChanger.singleton, 100);
     }

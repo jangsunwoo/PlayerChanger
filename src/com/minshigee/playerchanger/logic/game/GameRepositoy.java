@@ -29,11 +29,15 @@ public class GameRepositoy extends Repository<GameData> {
         super(localDB,viewCode);
     }
 
-    public void excuteGameStart(Player player){
+    public void excuteGameStart(Player player, String[] args){
         if(GameData.getGameState().equals(GameState.Disable)){
             MessageUtil.printMsgToAll(ChatMessageType.CHAT, ChatColor.AQUA + "게임이 곧 시작됩니다. 관련 세팅을 시작합니다.");
             resetGame();
             GameData.makeNextGameStatus();
+            if(args.length > 1 && args[1].equalsIgnoreCase("all")) {
+                MessageUtil.printMsgToAll(ChatMessageType.CHAT, ChatColor.GOLD + "관리자가 모두를 참가자로 지정했습니다.");
+                Bukkit.getOnlinePlayers().forEach(this::executeJoin);
+            }
             ///////뒤는 대기 상태에서의 추가 코드입니다.//////
             printWaitMessage();
             scanGameWorldPos();
