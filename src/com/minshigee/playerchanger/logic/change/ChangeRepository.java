@@ -36,6 +36,10 @@ public class ChangeRepository extends Repository<ChangeData> {
         }.runTaskLater(PlayerChanger.singleton, 60);
     }
 
+    public void changePlayer(Player p1, Player p2){
+        localDB.executeMethods(p1,p2);
+    }
+
     public void registerChangeMethod(Integer code, Method method){
         localDB.addMethod(code, method);
     }
