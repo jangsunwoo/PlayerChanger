@@ -6,11 +6,11 @@ import com.minshigee.playerchanger.domain.annotation.IsController;
 import com.minshigee.playerchanger.domain.module.Controller;
 import com.minshigee.playerchanger.logic.game.GameData;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Util {
@@ -34,5 +34,14 @@ public class Util {
         ArrayList<Participant> res = new ArrayList<>(GameData.getParticipantsAlive());
         Collections.shuffle(res);
         return res;
+    }
+
+    public static ItemStack createItem(String name, Material material, List<String> lore){
+        ItemStack item = new ItemStack(material, 1);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
     }
 }

@@ -9,7 +9,9 @@ import com.minshigee.playerchanger.util.MessageUtil;
 import com.minshigee.playerchanger.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -25,6 +27,18 @@ public class ChangeRepository extends Repository<ChangeData> {
         super(localDB,viewCode);
         //registerChangeMethod(this.getClass()); //register이 controller보다 먼저 선언되기 때문에 여기선 직접 넣어줘야함.
         Arrays.stream(this.getClass().getDeclaredMethods()).filter(method -> method.getDeclaredAnnotation(MappingChange.class) != null).forEach(method -> registerChangeMethod(viewCode,method));
+    }
+
+    public void showShopMain(Player player){
+        player.openInventory(localDB.getInventory());
+    }
+
+    public void inventoryClickShopInventory(InventoryClickEvent event){
+        if(event.getCurrentItem().getType().equals(Material.CLOCK)){
+            //TODO 점수 제거
+            ((ChangeController)PlayerChanger.getInstanceOfClass(ChangeController.class))
+                    .changePlayers((Player)event.getWhoClicked(), null);
+        }
     }
 
     public void changePlayers(Player player, String[] args){
@@ -43,7 +57,6 @@ public class ChangeRepository extends Repository<ChangeData> {
     public void registerChangeMethod(Integer code, Method method){
         localDB.addMethod(code, method);
     }
-
 
     public void changePlayerInfo(){
         MessageUtil.printConsoleLog("아이템을 교체합니다.");
