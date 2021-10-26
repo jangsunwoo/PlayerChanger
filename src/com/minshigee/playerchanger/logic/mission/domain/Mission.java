@@ -42,7 +42,7 @@ public class Mission implements IMission {
         for (Participant participant : tmpParticipants){
             participants.put(participant,0);
         }
-        this.point = 1;
+        this.point = 10;
         this.num = num;
         this.description = "%d) ".formatted(num);
     }

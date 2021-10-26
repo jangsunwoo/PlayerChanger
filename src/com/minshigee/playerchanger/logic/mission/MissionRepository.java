@@ -2,6 +2,7 @@ package com.minshigee.playerchanger.logic.mission;
 
 import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.domain.module.Repository;
+import com.minshigee.playerchanger.logic.change.ChangeController;
 import com.minshigee.playerchanger.logic.game.GameController;
 import com.minshigee.playerchanger.logic.game.GameData;
 import com.minshigee.playerchanger.logic.mission.domain.Mission;
@@ -59,6 +60,10 @@ public class MissionRepository extends Repository<MissionData> {
             Player player = mission.updateMission(event);
             if(player == null)
                 return false;
+            GameData.getParticipantAlive(player).ifPresent(participant -> {
+                ((ChangeController)PlayerChanger.getInstanceOfClass(ChangeController.class))
+                        .addPointToParticipant(participant, mission.getPoint());
+            });
             updateScoreboard(mission);
             ViewController.singleton.playSoundAllParticipants(Sound.BLOCK_NOTE_BLOCK_FLUTE);
             validateMission();

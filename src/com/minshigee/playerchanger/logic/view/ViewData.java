@@ -1,10 +1,8 @@
 package com.minshigee.playerchanger.logic.view;
 
-import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.logic.view.domain.ViewTask;
 import com.mojang.datafixers.util.Pair;
 import org.bukkit.Bukkit;
-import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.util.*;
@@ -20,7 +18,7 @@ public class ViewData {
     private ArrayList<ArrayList<Pair<String,String>>> scoreboardTemplate = new ArrayList<>();
 
     private void initScoreboardTemplate(){
-        for(int i = 0; i < 5; i++)
+        for(int i = 0; i < 10; i++)
             scoreboardTemplate.add(new ArrayList<>());
     }
 

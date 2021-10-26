@@ -29,6 +29,24 @@ public class ChangeRepository extends Repository<ChangeData> {
         Arrays.stream(this.getClass().getDeclaredMethods()).filter(method -> method.getDeclaredAnnotation(MappingChange.class) != null).forEach(method -> registerChangeMethod(viewCode,method));
     }
 
+    public void clearChangeData(){
+        localDB.clearScores();
+    }
+
+    /*
+    Point 관련 모듈
+     */
+    public void addParticipantPoint(Participant participant, Integer value){
+        localDB.updateScore(participant,value);
+    }
+    public boolean useParticipantPoint(Participant participant, Integer value){
+        return localDB.useScore(participant, value);
+    }
+
+    /*
+    Shop 관련 모듈
+     */
+
     public void showShopMain(Player player){
         player.openInventory(localDB.getInventory());
     }
@@ -40,6 +58,11 @@ public class ChangeRepository extends Repository<ChangeData> {
                     .changePlayers((Player)event.getWhoClicked(), null);
         }
     }
+
+
+    /*
+    Change 관련 모듈
+     */
 
     public void changePlayers(Player player, String[] args){
         new BukkitRunnable(){

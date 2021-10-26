@@ -1,6 +1,7 @@
 package com.minshigee.playerchanger.logic.change;
 
 import com.minshigee.playerchanger.PlayerChanger;
+import com.minshigee.playerchanger.domain.Participant;
 import com.minshigee.playerchanger.domain.module.Data;
 import com.minshigee.playerchanger.util.MessageUtil;
 import com.minshigee.playerchanger.util.Util;
@@ -19,10 +20,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class ChangeData extends Data implements InventoryHolder {
     private final ArrayList<Pair<Integer, Method>> changeMethods = new ArrayList<>();
+    private HashMap<Participant, Integer> scoreData = new HashMap<>();
     private Inventory shopMain = Bukkit.createInventory(this,9, "Shop Menu");
     private Inventory shopEffect = Bukkit.createInventory(this,9, "Effects Shop");
 
@@ -33,6 +36,28 @@ public class ChangeData extends Data implements InventoryHolder {
     private void init(){
         shopMain.setItem(2,Util.createItem("Change", Material.CLOCK, Collections.singletonList(ChatColor.GREEN + "유저들을 Change합니다.")));
         shopMain.setItem(6, Util.createItem("Effect Shop", Material.GOLDEN_APPLE, Collections.singletonList(ChatColor.GREEN + "효과를 구입합니다.")));
+    }
+
+    public Integer getScore(Participant participant){
+        return scoreData.get(participant);
+    }
+
+    public void updateScore(Participant participant, Integer score){
+        scoreData.putIfAbsent(participant, 0);
+        scoreData.replace(participant,getScore(participant) + score);
+    }
+
+    public boolean useScore(Participant participant, Integer value){
+        Integer score = getScore(participant);
+        if(score < value) {
+            return false;
+        }
+        updateScore(participant,-value);
+        return true;
+    }
+
+    public void clearScores(){
+        scoreData.clear();
     }
 
     public void addMethod(Integer code, Method method)

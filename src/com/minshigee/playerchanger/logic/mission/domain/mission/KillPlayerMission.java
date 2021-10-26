@@ -39,7 +39,7 @@ public class KillPlayerMission extends Mission {
         new BukkitRunnable(){
             @Override
             public void run() {
-                if(i[0] > 5)
+                if(i[0] > 2)
                     cancel();
                 if(getClearPlayer() != null || !GameData.getGameState().equals(GameState.Enable)){
                     cancel();
@@ -51,12 +51,13 @@ public class KillPlayerMission extends Mission {
                             ChatColor.GOLD + "당신의 목표는 %s입니다. %s를 죽이세요.".formatted(name,name));
                 });
             }
-        }.runTaskTimer(PlayerChanger.singleton, 20, 300);
+        }.runTaskTimer(PlayerChanger.singleton, 20, 160);
     }
 
     public KillPlayerMission(int num) {
         super(num);
         this.description = "(채팅 확인)목표를 제거하세요.";
+        this.setPoint(30);
         initKillMap();
     }
 
