@@ -7,8 +7,11 @@ import com.minshigee.playerchanger.domain.module.Controller;
 import com.minshigee.playerchanger.logic.game.GameData;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Skull;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,8 +42,18 @@ public class Util {
     public static ItemStack createItem(String name, Material material, List<String> lore){
         ItemStack item = new ItemStack(material, 1);
         ItemMeta meta = item.getItemMeta();
+        assert meta != null;
         meta.setDisplayName(name);
         meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public static ItemStack createPlayerHead(Player player, String name, List<String> lore){
+        ItemStack item = createItem(name, Material.SKELETON_SKULL, lore);
+        SkullMeta meta = (SkullMeta) item.getItemMeta();
+        assert meta != null;
+        meta.setOwningPlayer(player);
         item.setItemMeta(meta);
         return item;
     }
