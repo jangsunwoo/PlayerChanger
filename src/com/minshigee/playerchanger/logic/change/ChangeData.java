@@ -3,6 +3,7 @@ package com.minshigee.playerchanger.logic.change;
 import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.domain.Participant;
 import com.minshigee.playerchanger.domain.module.Data;
+import com.minshigee.playerchanger.logic.change.shops.domain.Shop;
 import com.minshigee.playerchanger.logic.game.GameData;
 import com.minshigee.playerchanger.util.MessageUtil;
 import com.minshigee.playerchanger.util.Util;
@@ -19,77 +20,22 @@ import java.util.*;
 
 public class ChangeData extends Data implements InventoryHolder {
     private final ArrayList<Pair<Integer, Method>> changeMethods = new ArrayList<>();
-    private HashMap<Participant, Integer> scoreData = new HashMap<>();
-    private Inventory shopMain = Bukkit.createInventory(this,8, "Shop Menu");
-    private Inventory shopEffect = Bukkit.createInventory(this,9, "Effect Shop");
-
-    public ChangeData() {
-        init();
-    }
-
-    private void init(){
-        initShopMain();
-        initShopEffect();
-    }
-
-    private void initShopMain(){
-        shopMain.setItem(2, Util.createItem("#", Material.GREEN_STAINED_GLASS_PANE, Collections.singletonList("")));
-        shopMain.setItem(4,Util.createItem("Change", Material.CLOCK, Collections.singletonList(ChatColor.GREEN + "유저들을 Change합니다.")));
-        shopMain.setItem(6, Util.createItem("Effect Shop", Material.GOLDEN_APPLE, Collections.singletonList(ChatColor.GREEN + "효과를 구입합니다.")));
-    }
-
-    private void initShopEffect(){
-        //TODO Const Material 추가하기.
-    }
-
-    public Inventory makeShopMainForPlayer(Player player){
-        GameData.getParticipantAlive(player).ifPresentOrElse(
-                participant -> {
-                    shopMain.setItem(0, Util.createPlayerHead(
-                            player,
-                            ChatColor.GOLD + player.getName(),
-                            Collections.singletonList("체력 : %d\n점수 : %d".formatted((int) player.getHealth(), scoreData.get(participant)))
-                    ));
-
-                    shopMain.setItem(1, Util.createItem(
-                                    ChatColor.GREEN + "점수 : %d".formatted(scoreData.get(participant)),
-                                    Material.EMERALD,
-                                    Collections.singletonList("")
-                            )
-                    );
-                },
-                () -> {
-                    shopMain.clear(0);
-                    shopMain.clear(1);
-                }
-        );
-        return shopMain;
-    }
-
-    public Inventory makeEffectShopForPlayer(Player player){
-        GameData.getParticipantAlive(player).ifPresentOrElse(
-                participant -> {
-                    shopEffect.setItem(31, Util.createItem(
-                                    ChatColor.GREEN + "점수 : %d".formatted(scoreData.get(participant)),
-                                    Material.EMERALD,
-                                    Collections.singletonList("")
-                            )
-                    );
-                },
-                () -> {
-                    shopMain.clear(31);
-                }
-        );
-        return shopMain;
-    }
+    public static HashMap<Participant, Integer> scoreData = new HashMap<>();
+    private HashMap<Integer, ? extends Shop> shopData = new HashMap<>();
 
     public Integer getScore(Participant participant){
         return scoreData.get(participant);
     }
 
     public void updateScore(Participant participant, Integer score){
-        scoreData.putIfAbsent(participant, 0);
-        scoreData.replace(participant,getScore(participant) + score);
+        try{
+            scoreData.putIfAbsent(participant, 0);
+            scoreData.replace(participant,getScore(participant) + score);
+            MessageUtil.printLogToPlayer(participant.getPlayer(),"%s%d %s포인트를 지급합니다. %s{현재: %d점}".formatted(ChatColor.GOLD,score,ChatColor.GRAY,ChatColor.GREEN,getScore(participant)));
+        }
+        catch (Exception e){
+            MessageUtil.printConsoleLog(e.getMessage());
+        }
     }
 
     public boolean useScore(Participant participant, Integer value){
@@ -141,6 +87,6 @@ public class ChangeData extends Data implements InventoryHolder {
 
     @Override
     public Inventory getInventory() {
-        return shopMain;
+        return null;
     }
 }

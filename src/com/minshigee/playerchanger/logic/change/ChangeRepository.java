@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChangeRepository extends Repository<ChangeData> {
     public ChangeRepository(ChangeData localDB, Integer viewCode) {
@@ -42,12 +43,19 @@ public class ChangeRepository extends Repository<ChangeData> {
     public boolean useParticipantPoint(Participant participant, Integer value){
         return localDB.useScore(participant, value);
     }
+    public Integer readPointOfParticipant(Player player){
+        AtomicInteger res = new AtomicInteger(0);
+        GameData.getParticipantByPlayer(player).ifPresent(participant -> {
+            res.set(localDB.getScore(participant));
+        });
+        return res.get();
+    }
 
     /*
     Shop 관련 모듈
      */
     public void showShopMain(Player player){
-        player.openInventory(localDB.makeShopMainForPlayer(player));
+        //player.openInventory(localDB.makeShopMainForPlayer(player));
     }
 
     public void showShopEffect(Player player){
@@ -65,7 +73,7 @@ public class ChangeRepository extends Repository<ChangeData> {
                                 .changePlayers((Player)event.getWhoClicked(), null);
                     break;
                 case GOLDEN_APPLE:
-                    player.openInventory(localDB.makeEffectShopForPlayer(player));
+                    //player.openInventory(localDB.makeEffectShopForPlayer(player));
                     break;
             }
         });
