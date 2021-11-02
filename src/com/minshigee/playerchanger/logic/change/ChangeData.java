@@ -3,6 +3,7 @@ package com.minshigee.playerchanger.logic.change;
 import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.domain.Participant;
 import com.minshigee.playerchanger.domain.module.Data;
+import com.minshigee.playerchanger.logic.change.shops.MainShop;
 import com.minshigee.playerchanger.logic.change.shops.domain.Shop;
 import com.minshigee.playerchanger.logic.game.GameData;
 import com.minshigee.playerchanger.util.MessageUtil;
@@ -18,12 +19,21 @@ import org.bukkit.inventory.InventoryHolder;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class ChangeData extends Data implements InventoryHolder {
+public class ChangeData extends Data {
     private final ArrayList<Pair<Integer, Method>> changeMethods = new ArrayList<>();
     public static HashMap<Participant, Integer> scoreData = new HashMap<>();
-    private HashMap<Integer, ? extends Shop> shopData = new HashMap<>();
+    private HashMap<Integer,? extends Shop> shopData = new HashMap<>(){{
+        put(0,new MainShop());
+    }};
+
+    public Inventory makeShopInventory(Integer code, Participant participant){
+        return shopData.get(code).getParticipantShop(participant);
+    }
 
     public Integer getScore(Participant participant){
+        if(scoreData.get(participant) == null){
+            updateScore(participant, 0);
+        }
         return scoreData.get(participant);
     }
 
@@ -85,8 +95,4 @@ public class ChangeData extends Data implements InventoryHolder {
         });
     }
 
-    @Override
-    public Inventory getInventory() {
-        return null;
-    }
 }

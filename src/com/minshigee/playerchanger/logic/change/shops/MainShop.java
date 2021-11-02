@@ -4,18 +4,24 @@ import com.minshigee.playerchanger.domain.Participant;
 import com.minshigee.playerchanger.logic.change.ChangeData;
 import com.minshigee.playerchanger.logic.change.shops.domain.Shop;
 import com.minshigee.playerchanger.logic.game.GameData;
+import com.minshigee.playerchanger.util.MessageUtil;
 import com.minshigee.playerchanger.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 import java.util.Collections;
 
 public class MainShop extends Shop {
+    public MainShop() {
+        init();
+    }
+
     @Override
     protected void init() {
-        inventory = Bukkit.createInventory(null, 8,"Main Shop");
+        inventory = Bukkit.createInventory(this, 9,"Main Shop");
         inventory.setItem(2, Util.createItem("#", Material.GREEN_STAINED_GLASS_PANE, Collections.singletonList("")));
         inventory.setItem(4,Util.createItem("Change", Material.CLOCK, Collections.singletonList(ChatColor.GREEN + "유저들을 Change합니다.")));
         inventory.setItem(6, Util.createItem("Effect Shop", Material.GOLDEN_APPLE, Collections.singletonList(ChatColor.GREEN + "효과를 구입합니다.")));
@@ -46,5 +52,10 @@ public class MainShop extends Shop {
                 }
         );
 
+    }
+
+    @Override
+    public Inventory getInventory() {
+        return super.getInventory();
     }
 }

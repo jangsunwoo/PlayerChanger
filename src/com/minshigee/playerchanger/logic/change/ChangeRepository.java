@@ -55,7 +55,9 @@ public class ChangeRepository extends Repository<ChangeData> {
     Shop 관련 모듈
      */
     public void showShopMain(Player player){
-        //player.openInventory(localDB.makeShopMainForPlayer(player));
+        GameData.getParticipantByPlayer(player).ifPresent(participant -> {
+            player.openInventory(localDB.makeShopInventory(0,participant));
+        });
     }
 
     public void showShopEffect(Player player){
@@ -65,16 +67,25 @@ public class ChangeRepository extends Repository<ChangeData> {
     public void inventoryClickShopInventory(InventoryClickEvent event){
         Player player = (Player)event.getWhoClicked();
         GameData.getParticipantAlive(player).ifPresent(participant -> {
-            Material clickedMat = Objects.requireNonNull(event.getCurrentItem()).getType();
-            switch (clickedMat){
-                case CLOCK:
-                    if(localDB.useScore(participant, 100))
-                        ((ChangeController)PlayerChanger.getInstanceOfClass(ChangeController.class))
-                                .changePlayers((Player)event.getWhoClicked(), null);
-                    break;
-                case GOLDEN_APPLE:
-                    //player.openInventory(localDB.makeEffectShopForPlayer(player));
-                    break;
+            if(event.getCurrentItem() == null)
+                return;
+            try {
+                Material clickedMat = event.getCurrentItem().getType();
+                switch (clickedMat){
+                    case CLOCK:
+                        if(localDB.useScore(participant, 100))
+                            ((ChangeController)PlayerChanger.getInstanceOfClass(ChangeController.class))
+                                    .changePlayers((Player)event.getWhoClicked(), null);
+                        break;
+                    case GOLDEN_APPLE:
+                        //player.openInventory(localDB.makeEffectShopForPlayer(player));
+                        break;
+                    case AIR:
+                        break;
+                }
+            }
+            catch (Exception e){
+                MessageUtil.printConsoleLog(e.getMessage());
             }
         });
     }

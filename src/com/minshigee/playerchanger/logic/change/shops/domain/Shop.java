@@ -4,17 +4,14 @@ import com.minshigee.playerchanger.domain.Participant;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
-public class Shop implements IShop{
+public class Shop implements InventoryHolder {
 
     protected Inventory inventory = null;
 
-    public Shop() {
-        init();
-    }
-
     protected void init(){
-        inventory = Bukkit.createInventory(null, InventoryType.CHEST,"default");
+        inventory = Bukkit.createInventory(this, InventoryType.CHEST,"default");
     }
 
     protected void makeInventory(Participant participant){
@@ -28,6 +25,6 @@ public class Shop implements IShop{
 
     @Override
     public Inventory getInventory() {
-        return null;
+        return inventory;
     }
 }
