@@ -40,9 +40,10 @@ public class GameData extends Data {
     }
     public static void makeNextGameStatus(){
         switch (gameState){
-            case Disable -> setGameStatus(GameState.Waitting);
-            case Waitting, Freezing -> setGameStatus(GameState.Enable);
-            case Enable -> setGameStatus(GameState.Freezing);
+            case Disable : setGameStatus(GameState.Waitting); break;
+            case Waitting :
+            case Freezing : setGameStatus(GameState.Enable); break;
+            case Enable : setGameStatus(GameState.Freezing); break;
         }
         ViewRepository.curTime = 0;
     }

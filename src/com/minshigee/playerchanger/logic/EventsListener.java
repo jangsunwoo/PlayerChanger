@@ -40,6 +40,7 @@ public class EventsListener implements Listener {
     @EventHandler public void interactPlayer(PlayerInteractEvent event){executeEventMethod(event.getEventName(),event);}
     @EventHandler public void breakBlockPlayer(BlockBreakEvent event){executeEventMethod(event.getEventName(),event);}
     @EventHandler public void clickInventory(InventoryClickEvent event){executeEventMethod(event.getEventName(),event);}
+    @EventHandler public void entityDamage(EntityDamageEvent event){executeEventMethod(event.getEventName(),event);}
 
 
     public EventsListener(){

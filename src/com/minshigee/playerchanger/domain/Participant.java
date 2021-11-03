@@ -9,21 +9,13 @@ public class Participant implements IParticipant{
 
     private Player player;
     private Role role;
-    private Ability ability;
     private boolean death = false;
 
     public Participant(Player _player, Role _role) {
         player = _player;
         role = _role;
-        ability = Ability.None;
     }
 
-    public Participant(Player _player, Role _role, Ability _ability)
-    {
-        player = _player;
-        role = _role;
-        ability = _ability;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -57,12 +49,6 @@ public class Participant implements IParticipant{
     public void setRole(Role _role) {
         role = _role;
     }
-
-    @Override
-    public Ability getAbility() { return ability; }
-
-    @Override
-    public void setAbility(Ability _ability) { ability = _ability; }
 
     @Override
     public boolean getIsDeath() {
