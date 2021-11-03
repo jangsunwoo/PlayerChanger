@@ -83,11 +83,11 @@ public class MissionRepository extends Repository<MissionData> {
     private void clearAllMissionAndReset(){
         ((GameController)PlayerChanger.getInstanceOfClass(GameController.class))
                 .executeStart(null, null);
+        reloadMissions();
         ViewController.singleton.playSoundAllParticipants(Sound.BLOCK_BELL_USE);
         new BukkitRunnable(){
             @Override
             public void run() {
-                reloadMissions();
                 registerScoreboard();
                 ((GameController)PlayerChanger.getInstanceOfClass(GameController.class))
                         .executeStart(null, null);

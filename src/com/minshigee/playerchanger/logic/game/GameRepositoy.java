@@ -15,6 +15,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockVector;
@@ -48,6 +49,8 @@ public class GameRepositoy extends Repository<GameData> {
             executeEnable();
         }
         else if(GameData.getGameState().equals(GameState.Enable)){
+            ItemGenerate.resetWorldBlock();
+            ItemGenerate.makeNecessaryBlock(viewCode);
             GameData.makeNextGameStatus();
             ((ChangeController)PlayerChanger.getInstanceOfClass(ChangeController.class))
                     .changePlayers(null, null);
@@ -135,6 +138,27 @@ public class GameRepositoy extends Repository<GameData> {
                 ));
             }
         }.runTaskTimerAsynchronously(PlayerChanger.singleton, 0, 40);
+    }
+
+    /*
+    Game Validation 관련 코드
+     */
+    public void removeLegacyBlock(BlockPlaceEvent event){
+        Player player = event.getPlayer();
+        if(GameData.getParticipantByPlayer(player).isEmpty())
+            return;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                event.setCancelled(true);
+            }
+        }.runTaskLaterAsynchronously(PlayerChanger.singleton, 200);
+    }
+
+    public void protectBrokenBlockByParticipant(BlockBreakEvent event){
+        GameData.getParticipantByPlayer(event.getPlayer()).ifPresent(participant -> {
+            event.setCancelled(true);
+        });
     }
 
 }

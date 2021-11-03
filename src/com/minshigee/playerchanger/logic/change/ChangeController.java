@@ -6,6 +6,7 @@ import com.minshigee.playerchanger.domain.annotation.IsController;
 import com.minshigee.playerchanger.domain.annotation.MappingCommand;
 import com.minshigee.playerchanger.domain.annotation.MappingEvent;
 import com.minshigee.playerchanger.domain.module.Controller;
+import com.minshigee.playerchanger.logic.change.shops.domain.Shop;
 import com.minshigee.playerchanger.logic.game.GameData;
 import com.minshigee.playerchanger.util.MessageUtil;
 import net.md_5.bungee.api.ChatMessageType;
@@ -44,8 +45,29 @@ public class ChangeController extends Controller<ChangeRepository> {
         catch (Exception e){
             MessageUtil.printConsoleLog(e.getMessage());
         }
-
     }
+
+    @MappingCommand(arg = "point", needOp = true, states = {GameState.Enable, GameState.Freezing})
+    public void readPointOfParticipants(Player player, String[] args){
+        try {
+            if(args.length == 2 && !Bukkit.getPlayer(args[1]).isEmpty()){
+                Player tmpPlayer = Bukkit.getPlayer(args[1]);
+                int point = repository.readPointOfParticipant(tmpPlayer);
+                MessageUtil.printLogToPlayer(player, "%s: %d".formatted(tmpPlayer.getName(),point));
+                return;
+            }
+            GameData.getParticipantsAlive().stream()
+                    .map(Participant::getPlayer)
+                    .forEach(p -> {
+                        int point = repository.readPointOfParticipant(player);
+                        MessageUtil.printLogToPlayer(player, "%s: %d\n".formatted(p.getName(),point));
+                    });
+        }
+        catch (Exception e){
+            MessageUtil.printConsoleLog(e.getMessage());
+        }
+    }
+
     public void addPointToParticipant(Participant participant, Integer value){
         repository.addParticipantPoint(participant,value);
     }
@@ -71,7 +93,7 @@ public class ChangeController extends Controller<ChangeRepository> {
     @MappingEvent(states = {GameState.Disable, GameState.Enable, GameState.Waitting, GameState.Freezing})
     public void clickPlayerInventoryEvent_Change(InventoryClickEvent event){
         if(event.getClickedInventory() == null) {return;}
-        if(!(event.getClickedInventory().getHolder() instanceof ChangeData)){
+        if(!(event.getClickedInventory().getHolder() instanceof Shop)){
             return;
         }
         event.setCancelled(true);

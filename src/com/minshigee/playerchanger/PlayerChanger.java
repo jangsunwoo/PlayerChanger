@@ -19,6 +19,7 @@ import com.minshigee.playerchanger.logic.game.GameRepositoy;
 import com.minshigee.playerchanger.logic.mission.MissionController;
 import com.minshigee.playerchanger.logic.mission.MissionData;
 import com.minshigee.playerchanger.logic.mission.MissionRepository;
+import com.minshigee.playerchanger.util.Util;
 import org.apache.logging.log4j.core.config.AppenderRef;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -72,10 +73,10 @@ public class PlayerChanger extends JavaPlugin {
 
     private void registerModules(){
         injectDependency(GameController.class, GameRepositoy.class, GameData.class); //ViewCode = 0
+        injectDependency(ViewController.class, ViewRepository.class, ViewData.class); //ViewCode = 4
+        injectDependency(ChangeController.class, ChangeRepository.class, ChangeData.class); //ViewCode = 3
         injectDependency(MissionController.class, MissionRepository.class, MissionData.class); //ViewCode = 1
         injectDependency(AbilitiesController.class, AbilitiesRepository.class, AbilitiesData.class); //ViewCode = 2
-        injectDependency(ChangeController.class, ChangeRepository.class, ChangeData.class); //ViewCode = 3
-        injectDependency(ViewController.class, ViewRepository.class, ViewData.class); //ViewCode = 4
     }
 
     private <T,K,S> void injectDependency(T conClass, K repoClass, S dbClass){
@@ -93,7 +94,7 @@ public class PlayerChanger extends JavaPlugin {
             registerInstanceToContainer(tmpCont);
         }
         catch (Exception e){
-            MessageUtil.printConsoleLog(ChatColor.RED + "DI에 실패했습니다. { " + ((Class)conClass).getName() + " } 관련 모듈.");
+            MessageUtil.printConsoleLog(ChatColor.RED + "DI에 실패했습니다. { " + ((Class)conClass).getName() + " } 관련 모듈. log: " + e.getMessage());
         }
     }
 

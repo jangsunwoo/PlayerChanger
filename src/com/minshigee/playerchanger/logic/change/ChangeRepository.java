@@ -15,12 +15,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChangeRepository extends Repository<ChangeData> {
     public ChangeRepository(ChangeData localDB, Integer viewCode) {
@@ -42,23 +43,52 @@ public class ChangeRepository extends Repository<ChangeData> {
     public boolean useParticipantPoint(Participant participant, Integer value){
         return localDB.useScore(participant, value);
     }
+    public Integer readPointOfParticipant(Player player){
+        AtomicInteger res = new AtomicInteger(0);
+        GameData.getParticipantByPlayer(player).ifPresent(participant -> {
+            res.set(localDB.getScore(participant));
+        });
+        return res.get();
+    }
 
     /*
     Shop 관련 모듈
      */
-
     public void showShopMain(Player player){
-        player.openInventory(localDB.getInventory());
+        GameData.getParticipantByPlayer(player).ifPresent(participant -> {
+            player.openInventory(localDB.makeShopInventory(0,participant));
+        });
+    }
+
+    public void showShopEffect(Player player){
+
     }
 
     public void inventoryClickShopInventory(InventoryClickEvent event){
-        if(event.getCurrentItem().getType().equals(Material.CLOCK)){
-            //TODO 점수 제거
-            ((ChangeController)PlayerChanger.getInstanceOfClass(ChangeController.class))
-                    .changePlayers((Player)event.getWhoClicked(), null);
-        }
+        Player player = (Player)event.getWhoClicked();
+        GameData.getParticipantAlive(player).ifPresent(participant -> {
+            if(event.getCurrentItem() == null)
+                return;
+            try {
+                Material clickedMat = event.getCurrentItem().getType();
+                switch (clickedMat){
+                    case CLOCK:
+                        if(localDB.useScore(participant, 100))
+                            ((ChangeController)PlayerChanger.getInstanceOfClass(ChangeController.class))
+                                    .changePlayers((Player)event.getWhoClicked(), null);
+                        break;
+                    case GOLDEN_APPLE:
+                        //player.openInventory(localDB.makeEffectShopForPlayer(player));
+                        break;
+                    case AIR:
+                        break;
+                }
+            }
+            catch (Exception e){
+                MessageUtil.printConsoleLog(e.getMessage());
+            }
+        });
     }
-
 
     /*
     Change 관련 모듈

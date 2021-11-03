@@ -3,48 +3,49 @@ package com.minshigee.playerchanger.logic.change;
 import com.minshigee.playerchanger.PlayerChanger;
 import com.minshigee.playerchanger.domain.Participant;
 import com.minshigee.playerchanger.domain.module.Data;
+import com.minshigee.playerchanger.logic.change.shops.MainShop;
+import com.minshigee.playerchanger.logic.change.shops.domain.Shop;
+import com.minshigee.playerchanger.logic.game.GameData;
 import com.minshigee.playerchanger.util.MessageUtil;
 import com.minshigee.playerchanger.util.Util;
 import com.mojang.datafixers.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-public class ChangeData extends Data implements InventoryHolder {
+public class ChangeData extends Data {
     private final ArrayList<Pair<Integer, Method>> changeMethods = new ArrayList<>();
-    private HashMap<Participant, Integer> scoreData = new HashMap<>();
-    private Inventory shopMain = Bukkit.createInventory(this,9, "Shop Menu");
-    private Inventory shopEffect = Bukkit.createInventory(this,9, "Effects Shop");
+    public static HashMap<Participant, Integer> scoreData = new HashMap<>();
+    private HashMap<Integer,? extends Shop> shopData = new HashMap<>(){{
+        put(0,new MainShop());
+    }};
 
-    public ChangeData() {
-        init();
-    }
-
-    private void init(){
-        shopMain.setItem(2,Util.createItem("Change", Material.CLOCK, Collections.singletonList(ChatColor.GREEN + "유저들을 Change합니다.")));
-        shopMain.setItem(6, Util.createItem("Effect Shop", Material.GOLDEN_APPLE, Collections.singletonList(ChatColor.GREEN + "효과를 구입합니다.")));
+    public Inventory makeShopInventory(Integer code, Participant participant){
+        return shopData.get(code).getParticipantShop(participant);
     }
 
     public Integer getScore(Participant participant){
+        if(scoreData.get(participant) == null){
+            updateScore(participant, 0);
+        }
         return scoreData.get(participant);
     }
 
     public void updateScore(Participant participant, Integer score){
-        scoreData.putIfAbsent(participant, 0);
-        scoreData.replace(participant,getScore(participant) + score);
+        try{
+            scoreData.putIfAbsent(participant, 0);
+            scoreData.replace(participant,getScore(participant) + score);
+            MessageUtil.printLogToPlayer(participant.getPlayer(),"%s%d %s포인트를 지급합니다. %s{현재: %d점}".formatted(ChatColor.GOLD,score,ChatColor.GRAY,ChatColor.GREEN,getScore(participant)));
+        }
+        catch (Exception e){
+            MessageUtil.printConsoleLog(e.getMessage());
+        }
     }
 
     public boolean useScore(Participant participant, Integer value){
@@ -94,8 +95,4 @@ public class ChangeData extends Data implements InventoryHolder {
         });
     }
 
-    @Override
-    public Inventory getInventory() {
-        return shopMain;
-    }
 }
