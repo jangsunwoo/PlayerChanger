@@ -3,8 +3,8 @@
     <output-path>$USER_HOME$/Desktop/Minecraft 1.16.5/plugins</output-path>
     <root id="archive" name="Changed Chaser.jar">
       <element id="module-output" name="Changed Chaser" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../../Dependencies/spigot-1.16.5.jar" path-in-jar="/" />
       <element id="dir-copy" path="$PROJECT_DIR$/out" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/spigot-1.16.5.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
