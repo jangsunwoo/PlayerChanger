@@ -8,14 +8,18 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
 
 public class GoldenPig extends Abilities {
 
     public GoldenPig()
     {
         super(Ability.GoldenPig);
+        abilityHelp.put(Ability.GoldenPig,
+                ChatColor.GREEN + "\n──────[능력 정보]──────\n" +
+                ChatColor.AQUA + "황금돼지 " + ChatColor.WHITE + "[" + ChatColor.GRAY + "능력 활성화" + ChatColor.WHITE + "]" + ChatColor.AQUA + "C 등급" + ChatColor.WHITE + "인간\n" +
+                "상대방에게 타격을 받을 경우 그 자리에 금, 사과, 돼지고기를 뿌린다.\n" +
+                ChatColor.GREEN + "─────────────────\n"
+        );
     }
 
     @Override

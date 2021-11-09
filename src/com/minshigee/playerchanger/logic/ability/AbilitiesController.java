@@ -10,14 +10,10 @@ import com.minshigee.playerchanger.domain.module.Controller;
 import com.minshigee.playerchanger.logic.ability.domain.Abilities;
 import com.minshigee.playerchanger.logic.game.GameData;
 import com.minshigee.playerchanger.util.MessageUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 
-import javax.swing.text.html.Option;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -44,7 +40,7 @@ public class AbilitiesController extends Controller<AbilitiesRepository> {
             MessageUtil.printMsgToPlayer(ChatMessageType.CHAT, player, "/ph ability help");
             Optional<Participant> playerPart = GameData.getParticipantByPlayer(player);
             HashMap<Participant, Abilities.Ability> tmp = Abilities.getPartsAbility();
-            MessageUtil.printMsgToPlayer(ChatMessageType.CHAT, player, tmp.get(playerPart.get()).toString());
+            player.sendMessage(Abilities.getAbilityHelp(tmp.get(playerPart.get())));
         }
         else if(args != null && args[1].equals("random"))
         {

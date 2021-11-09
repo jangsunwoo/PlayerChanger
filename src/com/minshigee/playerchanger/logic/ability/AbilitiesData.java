@@ -8,7 +8,6 @@ import com.minshigee.playerchanger.logic.game.GameData;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
