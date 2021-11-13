@@ -9,12 +9,12 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 
-public class test extends Abilities {
+public class IronMan extends Abilities {
 
-    public test()
+    public IronMan()
     {
-        super(Ability.GoldenPig);
-        abilityHelp.put(Ability.GoldenPig,
+        super(Ability.IronMan);
+        abilityHelp.put(Ability.IronMan,
                 ChatColor.GREEN + "\n──────[능력 정보]──────\n" +
                         ChatColor.AQUA + "황금돼지 " + ChatColor.WHITE + "[" + ChatColor.GRAY + "능력 활성화" + ChatColor.WHITE + "]" + ChatColor.AQUA + "C 등급" + ChatColor.WHITE + "인간\n" +
                         "상대방에게 타격을 받을 경우 그 자리에 금, 사과, 돼지고기를 뿌린다.\n" +
@@ -43,4 +43,3 @@ public class test extends Abilities {
         return null;
     }
 }
-//  숙제:  철괴를 우클릭 했을 경우 우클릭한 플레이어한테 메세지가 전달이 되도록 (메세지가 뜨게끔.)

@@ -20,8 +20,9 @@ public class Abilities implements iAbilities {
     public enum Ability {
         None,
         GoldenPig,
-        Missionary
-    }
+        Missionary,
+        IronMan
+        }
 
     protected Ability ability;
 
